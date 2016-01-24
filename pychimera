@@ -1,0 +1,14 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+
+"""
+pychimera - Use UCSF Chimera Python API in a standard interpreter
+
+This is the binary used to call pychimera.
+"""
+
+if "__main__" == __name__:
+    import pychimera
+    pychimera.main()
+    update_dict = {k: v for (k, v) in pychimera.__dict__.iteritems() if k not in globals()}
+    globals().update(update_dict)
