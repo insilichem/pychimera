@@ -1,26 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function
 from setuptools import setup, find_packages
 import os
 
-import pychimera
+VERSION = "0.0.1"
 
-here = os.path.abspath(os.path.dirname(__file__))
+
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 setup(
     name='pychimera',
-    version=pychimera.__version__,
+    version=VERSION,
     url='https://github.com/insilichem/pychimera',
-    download_url='https://github.com/insilichem/pychimera/tarball/{}'.format(
-        pychimera.__version__),
+    download_url='https://github.com/insilichem/pychimera/tarball/' + VERSION,
     license='LGPL',
-    author=pychimera.__author__,
+    author="Jaime Rodríguez-Guerra",
     author_email='jaime.rogue@gmail.com',
-    description=pychimera.__doc__.splitlines()[4],
+    description='Use UCSF Chimera Python API in a standard Python 2.7 interpreter.',
+    long_description=read('README.md'),
     packages=find_packages(),
-    include_package_data=True,
     platforms='any',
     classifiers=[
         'Programming Language :: Python :: 2.7',
