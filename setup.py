@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 
 VERSION = "0.0.3"
@@ -20,7 +20,7 @@ setup(
     author_email='jaime.rogue@gmail.com',
     description='Use UCSF Chimera Python API in a standard Python 2.7 interpreter.',
     long_description=read('README.md'),
-    packages=find_packages(),
+    packages=['pychimera'],
     platforms='any',
     classifiers=[
         'Programming Language :: Python :: 2.7',
