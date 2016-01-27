@@ -1,0 +1,23 @@
+package:
+  name: pychimera
+  version: "0.0.8"
+
+about:
+  home: https://github.com/insilichem/pychimera
+  license: LGPL
+  summary: Use UCSF Chimera Python API in a standard Python 2.7 interpreter.
+
+source:
+  path: ../
+
+requirements:
+  build:
+    - python 2.7*
+    - setuptools
+
+  run:
+    - python 2.7*
+
+test:
+  imports:
+    - pychimera
