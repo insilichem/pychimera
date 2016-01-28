@@ -18,13 +18,17 @@ import sys
 import subprocess
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 0, 8)
+__version_info__ = (0, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 
 def patch_environ():
     """
-    Patch current environment variables so Chimera can start up and we can import its modules
+    Patch current environment variables so Chimera can start up and we can import its modules.
+
+    Be warned that calling this function WILL restart your interpreter. Otherwise, Python
+    won't catch the new LD_LIBRARY_PATH (or platform equivalent) and Chimera won't find its
+    libraries during import.
     """
     if 'CHIMERA' not in os.environ:
         os.environ['TERM'] = "xterm-256color"
@@ -54,12 +58,21 @@ def patch_environ():
         os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 
-def load_chimera():
+def load_chimera(verbose=False):
     """
     Bypass script loading and initialize Chimera in nogui mode.
+
+    Parameters
+    ----------
+    verbose : bool, optional, default=False
+        If True, let Chimera speak freely. It can be _very_ verbose.
     """
     import chimeraInit
-    chimeraInit.init(['', '--nostatus', '--silent', '--script', os.devnull],
+    if verbose:
+        verbosity = ['--debug']
+    else:
+        verbosity = ['--nostatus', '--silent']
+    chimeraInit.init([''] + verbosity + ['--script', os.devnull],
                      nogui=True, eventloop=False, exitonquit=False)
     del chimeraInit
 
@@ -91,6 +104,24 @@ def guess_chimera_path():
 
 
 def search_chimera(binary, directories, prefix):
+    """
+    Try running ``chimera --root`` in Chimera happens to be in PATH, otherwise
+    traverse usual installation locations to find the Chimera root path.
+
+    Parameters
+    ----------
+    binary : str
+        Name of the chimera executable in this platform
+    directories: list of str
+        Usual installation locations in this platform
+    prefix : str
+        Root directory prefix name in this platform
+
+    Returns
+    -------
+    paths : list of str
+        Sorted list of Chimera paths
+    """
     try:
         return subprocess.check_output([binary, '--root']).decode('utf-8').strip()
     except (OSError, subprocess.CalledProcessError, RuntimeError):
@@ -137,6 +168,9 @@ def run_cli_options():
 
 
 def check_ipython():
+    """
+    Check if an IPython launch has been requested from CLI
+    """
     global args, more_args
     if args.command == 'ipython':
         launch_ipython(more_args)
@@ -145,6 +179,9 @@ def check_ipython():
 
 
 def launch_ipython(argv=None):
+    """
+    Launch IPython from this interpreter with custom args if needed
+    """
     try:
         from IPython.terminal.ipapp import launch_new_instance
     except ImportError:
@@ -168,13 +205,17 @@ def in_ipython():
 def interactive_mode():
     """
     Check if we need to relaunch Python in interactive mode:
-
-    - sys.flags.interactive: First Python interpreter was called with -i
-    - len(sys.argv) <= 1: python or pychimera bare call
-    - -i* in sys.argv: pychimera has a -i flag in its call!
     """
     global args
     return any([args.interactive, sys.flags.interactive, len(sys.argv) <= 1])
+
+
+def enable_chimera(warn=True):
+    """
+    A simple alias to be called from interactive sessions, like IPython notebooks.
+    """
+    patch_environ()
+    load_chimera()
 
 
 def main():

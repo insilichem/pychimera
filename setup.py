@@ -4,7 +4,7 @@
 from setuptools import setup
 import os
 
-VERSION = "0.0.8"
+VERSION = "0.1.0-beta"
 
 
 def read(fname):
@@ -14,7 +14,7 @@ setup(
     name='pychimera',
     version=VERSION,
     url='https://github.com/insilichem/pychimera',
-    download_url='https://github.com/insilichem/pychimera/tarball/' + VERSION,
+    download_url='https://github.com/insilichem/pychimera/tarball/v' + VERSION,
     license='LGPL',
     author="Jaime Rodríguez-Guerra",
     author_email='jaime.rogue@gmail.com',
