@@ -18,7 +18,7 @@ Installation
 ------------
 First, if you haven't already, install [latest UCSF Chimera](http://www.cgl.ucsf.edu/chimera/download.html).
 
-Then, install PyChimera via pip, conda or setup.py:
+Then, install PyChimera via `pip`, `conda` or `setup.py`:
 
     pip install pychimera
     conda install -c insilichem pychimera

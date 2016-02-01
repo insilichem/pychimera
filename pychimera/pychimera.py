@@ -18,7 +18,7 @@ import sys
 import subprocess
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 0)
+__version_info__ = (0, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -32,7 +32,7 @@ def patch_environ():
     """
     if 'CHIMERA' not in os.environ:
         os.environ['TERM'] = "xterm-256color"
-        CHIMERA = os.environ['CHIMERA'] = os.environ['PYTHONHOME'] = guess_chimera_path()
+        CHIMERA = os.environ['CHIMERA'] = os.environ['PYTHONHOME'] = guess_chimera_path()[-1]
 
         # PYTHONPATH defines additional locations where Python should look for packages
         os.environ['PYTHONPATH'] = ":".join([os.path.join(CHIMERA, 'bin'),
@@ -67,7 +67,10 @@ def load_chimera(verbose=False):
     verbose : bool, optional, default=False
         If True, let Chimera speak freely. It can be _very_ verbose.
     """
-    import chimeraInit
+    try:
+        import chimeraInit
+    except ImportError as  e:
+        sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
     if verbose:
         verbosity = ['--debug']
     else:
@@ -79,7 +82,12 @@ def load_chimera(verbose=False):
 
 def guess_chimera_path():
     """
-    Try to guess Chimera installation path
+    Try to guess Chimera installation path.
+
+    Returns
+    -------
+    paths: list of str
+        Alphabetically sorted list of possible Chimera locations
     """
     # First, check if environment variable is already present
     if 'CHIMERADIR' in os.environ:
