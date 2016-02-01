@@ -4,7 +4,7 @@
 from setuptools import setup
 import os
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 
 def read(fname):
@@ -19,7 +19,7 @@ setup(
     author="Jaime Rodríguez-Guerra",
     author_email='jaime.rogue@gmail.com',
     description='Use UCSF Chimera Python API in a standard Python 2.7 interpreter.',
-    long_description=read('README.md'),
+    long_description=read('README.rst'),
     packages=['pychimera'],
     platforms='any',
     classifiers=[
