@@ -5,15 +5,15 @@ Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 
 With PyChimera you can…
 
--  Enable ``import chimera`` in interactive coding sessions (console,
-   notebooks) **outside Chimera**. Just call ``enable_chimera()``.
-   *Careful! Call it prior to other code or you’ll lose your previous
-   work.*
--  You can also launch Chimera-preenabled IPython sessions or Notebooks
-   with ``pychimera ipython`` and ``pychimera notebook`` respectively.
 -  Run scripts depending on chimera **from CLI** with either
    ``pychimera`` or ``python -m chimera``. This includes modules (``-m``
    flag) and strings (``-c`` flag).
+-  Enable ``import chimera`` in interactive coding sessions (console, ipython) 
+   **outside Chimera**. 
+-  Use Jupyter Notebooks with Chimera. Import and call ``enable_chimera()`` 
+   once you have loaded the injected notebook with ``pychimera notebook``.
+-  Launch a standard Chimera instance, with the benefit of importing all
+   your conda or virtualenv packages with ``pychimera --gui``.
 
 I hope it’s useful! Feedback is appreciated!
 
@@ -58,11 +58,17 @@ To execute any Python statement:
 
     pychimera -c 'import chimera'
 
-To execute one or more scripts:
+To execute a script:
 
 ::
 
-    pychimera script.py [script_2.py ...]
+    pychimera script.py
+
+To launch Chimera GUI with custom packages:
+
+::
+    pychimera --gui
+
 
 For developers
 --------------
@@ -76,20 +82,17 @@ interpreter. This is achieved in two steps:
    with Chimera. This call restarts Python to inject a new
    ``os.environ`` with ``os.execve``.
 
-2. ``load_chimera()`` initializes Chimera. This is done through their
+2. ``enable_chimera()`` initializes Chimera. This is done through their
    own routines (``chimeraInit``).
 
-However, you may call the alias function ``enable_chimera()`` without
-worrying on the steps.
-
-PyChimera also offers its interface through python ``-m``. Add ``-i``
-for interactive mode:
+PyChimera also offers its interface through python ``-m``. This has not
+been tested, so it may not work. Add ``-i`` for interactive mode:
 
 ::
 
     python -[i]m pychimera [-m another_module | -c "string" | script.py | ipython | notebook]
 
-You can also try to launch it from IPython, but some things may not
+You can also try to launch it from IPython, but, again, some things may not
 work. Anyway, these two commands have the same effect:
 
 ::

@@ -22,7 +22,7 @@ __version_info__ = (0, 1, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 
-def patch_environ():
+def patch_environ(nogui=True):
     """
     Patch current environment variables so Chimera can start up and we can import its modules.
 
@@ -32,24 +32,62 @@ def patch_environ():
     """
     if 'CHIMERA' not in os.environ:
         os.environ['TERM'] = "xterm-256color"
-        CHIMERA = os.environ['CHIMERA'] = os.environ['PYTHONHOME'] = guess_chimera_path()[-1]
+        CHIMERA = guess_chimera_path()[-1]
+        os.environ['CHIMERA'] = os.environ['PYTHONHOME'] = CHIMERA
+        os.environ['CHIMERA_PYTHONHOME'] = os.environ['PYTHONHOME']
+        CHIMERALIB = os.path.join(CHIMERA, 'lib')
 
-        # PYTHONPATH defines additional locations where Python should look for packages
-        os.environ['PYTHONPATH'] = ":".join([os.path.join(CHIMERA, 'bin'),
-                                             os.path.join(CHIMERA, 'share'),
-                                             os.path.join(CHIMERA, 'lib')]
-                                            + sys.path)  # don't forget current packages!
+        if nogui:
+            os.environ['PYTHONPATH'] = ":".join([os.path.join(CHIMERA, 'share'),
+                                                 os.path.join(CHIMERA, 'bin'),
+                                                 CHIMERALIB] + sys.path)
+        else:
+            os.environ['PYTHONPATH'] = \
+                ":".join([os.path.join(CHIMERA, 'share'),
+                          os.path.join(CHIMERALIB, 'python27.zip'),
+                          os.path.join(CHIMERALIB, 'python2.7'),
+                          os.path.join(CHIMERALIB, 'python2.7', 'idlelib'),
+                          os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
+                          os.path.join(CHIMERALIB, 'python2.7', 'site-packages')]
+                         + sys.path)
+
+            # Set Tcl/Tk for gui mode
+            if 'TCL_LIBRARY' in os.environ:
+                os.environ['CHIMERA_TCL_LIBRARY'] = os.environ['TCL_LIBRARY']
+            os.environ['TCL_LIBRARY'] = os.path.join(CHIMERALIB, 'tcl8.6')
+            if 'TCLLIBPATH' in os.environ:
+                os.environ['CHIMERA_TCLLIBPATH'] = os.environ['TCLLIBPATH']
+            os.environ['TCLLIBPATH'] = '{' + CHIMERALIB + '}'
+
+            if 'TK_LIBRARY' in os.environ:
+                os.environ['CHIMERA_TK_LIBRARY'] = os.environ['TK_LIBRARY']
+                del os.environ['TK_LIBRARY']
+            if 'TIX_LIBRARY' in os.environ:
+                os.environ['CHIMERA_TIX_LIBRARY'] = os.environ['TIX_LIBRARY']
+                del os.environ['TIX_LIBRARY']
+            if 'PYTHONNOUSERSITE' in os.environ:
+                os.environ['CHIMERA_PYTHONNOUSERSITE'] = os.environ['PYTHONNOUSERSITE']
+            os.environ['PYTHONNOUSERSITE'] = '1'
 
         # Load Chimera libraries
-        CHIMERALIB = os.path.join(CHIMERA, 'lib')
         if sys.platform == 'win32':
             os.environ['PATH'] += ":" + CHIMERALIB
         elif sys.platform == 'darwin':
-            OLDLIB = os.environ.getenv('DYLD_LIBRARY_PATH', '')
-            os.environ['DYLD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
+            try:
+                OLDLIB = os.environ['DYLD_LIBRARY_PATH']
+            except KeyError:
+                os.environ['DYLD_LIBRARY_PATH'] = CHIMERALIB, OLDLIB
+            else:
+                os.environ['CHIMERA_DYLD_LIBRARY_PATH'] = OLDLIB
+                os.environ['DYLD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
         else:
-            OLDLIB = os.environ.get('LD_LIBRARY_PATH', '')
-            os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
+            try:
+                OLDLIB = os.environ['LD_LIBRARY_PATH']
+            except KeyError:
+                os.environ['LD_LIBRARY_PATH'] = CHIMERALIB
+            else:
+                os.environ['CHIMERA_LD_LIBRARY_PATH'] = OLDLIB
+                os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
 
         # Check interactive and IPython
         if in_ipython() and hasattr(sys, 'ps1') and not sys.argv[0].endswith('ipython'):
@@ -58,27 +96,27 @@ def patch_environ():
         os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 
-def load_chimera(verbose=False):
+def enable_chimera(verbose=False, nogui=True):
     """
-    Bypass script loading and initialize Chimera in nogui mode.
+    Bypass script loading and initialize Chimera correctly.
 
     Parameters
     ----------
     verbose : bool, optional, default=False
         If True, let Chimera speak freely. It can be _very_ verbose.
+    nogui : bool, optional, default=True
+        Don't start the GUI.
     """
     try:
         import chimeraInit
-    except ImportError as  e:
+    except ImportError as e:
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
-    if verbose:
-        verbosity = ['--debug']
-    else:
-        verbosity = ['--nostatus', '--silent']
-    chimeraInit.init([''] + verbosity + ['--script', os.devnull],
-                     nogui=True, eventloop=False, exitonquit=False)
+    chimeraInit.init(['', '--script', os.devnull], debug=verbose,
+                     silent=not verbose, nostatus=not verbose,
+                     nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
     del chimeraInit
 
+load_chimera = enable_chimera
 
 def guess_chimera_path():
     """
@@ -131,10 +169,11 @@ def search_chimera(binary, directories, prefix):
         Sorted list of Chimera paths
     """
     try:
-        return subprocess.check_output([binary, '--root']).decode('utf-8').strip()
+        return subprocess.check_output([binary, '--root']).decode('utf-8').strip(),
     except (OSError, subprocess.CalledProcessError, RuntimeError):
         for basedir in directories:
             paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix+'*')))
+            print(paths)
             if paths:
                 paths.sort()
                 return paths
@@ -143,25 +182,28 @@ def search_chimera(binary, directories, prefix):
 
 def parse_cli_options(argv=None):
     parser = ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
-    parser.add_argument('-i', action='store_true', dest='interactive',
+    parser.add_argument('-i', action='store_true', dest='interactive', default=False,
                         help='Enable interactive mode')
+    parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
+                        help='Print debug information')
+    parser.add_argument('--gui', action='store_false', dest='nogui', default=True,
+                        help='Launch Chimera graphical interface')
+
     group = parser.add_mutually_exclusive_group()
     group.add_argument('command', nargs='?',
                        help="A keyword {ipython, notebook} or a Python script")
     group.add_argument('-m', dest='module', help='Run Python module as a script')
     group.add_argument('-c', dest='string', help='Program passed in as string')
 
-    global args, more_args
-    args, more_args = parser.parse_known_args(argv)
+    return parser.parse_known_args(argv)
 
 
-def run_cli_options():
+def run_cli_options(args):
     """
     Quick implementation of Python interpreter's -m, -c and file execution.
     The resulting dictionary is imported into global namespace, just in case
     someone is using interactive mode.
     """
-    global args, more_args
     if not in_ipython():
         if args.module:
             globals().update(runpy.run_module(args.module, run_name="__main__"))
@@ -171,19 +213,22 @@ def run_cli_options():
             oldargv, sys.argv = sys.argv, sys.argv[1:]
             globals().update(runpy.run_path(args.command, run_name="__main__"))
             sys.argv = oldargv
-    if interactive_mode():
+    if interactive_mode(args.interactive):
         os.environ['PYTHONINSPECT'] = 'yes'
 
 
-def check_ipython():
+def check_ipython(command, args):
     """
     Check if an IPython launch has been requested from CLI
     """
-    global args, more_args
-    if args.command == 'ipython':
-        launch_ipython(more_args)
-    elif args.command == 'notebook':
-        launch_ipython(['notebook'] + more_args)
+    if command == 'ipython':
+        launch_ipython(args)
+    elif command == 'notebook':
+        print('-'*56)
+        print('Remember to call pychimera.enable_chimera() from a cell!')
+        print('-'*56)
+        launch_ipython(['notebook'] + args)
+
 
 
 def launch_ipython(argv=None):
@@ -210,36 +255,28 @@ def in_ipython():
     return hasattr(__builtins__, '__IPYTHON__')
 
 
-def interactive_mode():
+def interactive_mode(interactive_flag=False):
     """
     Check if we need to relaunch Python in interactive mode:
     """
-    global args
-    return any([args.interactive, sys.flags.interactive, len(sys.argv) <= 1])
-
-
-def enable_chimera(warn=True):
-    """
-    A simple alias to be called from interactive sessions, like IPython notebooks.
-    """
-    patch_environ()
-    load_chimera()
+    return any([interactive_flag, sys.flags.interactive, len(sys.argv) <= 1])
 
 
 def main():
     """
-    1. Patch the environment with Python and libraries paths. This relaunches Python!
-    2. Parse argv to see if we need to launch IPython before Chimera.
+    1. Parse CLI arguments.
+    2. Patch the environment with Python and libraries paths. This relaunches Python!
     3. Launch IPython if requested
     4. Load Chimera. IPython can import it now!
     5. Run any additional CLI arguments (-m, -c, -f), if needed
     """
-    parse_cli_options()
-    patch_environ()
-    check_ipython()
-    load_chimera()
-    run_cli_options()
-
+    args, more_args = parse_cli_options()
+    patch_environ(nogui=args.nogui)
+    if args.command != 'notebook':
+        enable_chimera(verbose=args.verbose, nogui=args.nogui)
+    if args.nogui:
+        check_ipython(args.command, more_args)
+        run_cli_options(args)
 
 if "__main__" == __name__:
     main()
