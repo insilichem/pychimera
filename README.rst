@@ -67,7 +67,9 @@ To execute a script:
 To launch Chimera GUI with custom packages:
 
 ::
+
     pychimera --gui
+
 
 
 For developers

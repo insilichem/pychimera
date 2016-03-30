@@ -18,7 +18,7 @@ import sys
 import subprocess
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 2)
+__version_info__ = (0, 1, 3)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -30,70 +30,85 @@ def patch_environ(nogui=True):
     won't catch the new LD_LIBRARY_PATH (or platform equivalent) and Chimera won't find its
     libraries during import.
     """
-    if 'CHIMERA' not in os.environ:
-        os.environ['TERM'] = "xterm-256color"
-        CHIMERA = guess_chimera_path()[-1]
-        os.environ['CHIMERA'] = os.environ['PYTHONHOME'] = CHIMERA
-        os.environ['CHIMERA_PYTHONHOME'] = os.environ['PYTHONHOME']
-        CHIMERALIB = os.path.join(CHIMERA, 'lib')
+    if 'CHIMERA' in os.environ:
+        return
 
-        if nogui:
-            os.environ['PYTHONPATH'] = ":".join([os.path.join(CHIMERA, 'share'),
-                                                 os.path.join(CHIMERA, 'bin'),
-                                                 CHIMERALIB] + sys.path)
+    os.environ['CHIMERA'] = CHIMERA = guess_chimera_path()[-1]
+    CHIMERALIB = os.path.join(CHIMERA, 'lib')
+    os.environ['PYTHONPATH'] = ":".join([
+        CHIMERALIB,
+        os.path.join(CHIMERA, 'share'),
+        os.path.join(CHIMERA, 'share'),
+        os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'setuptools-3.1-py2.7.egg'),
+        os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
+        os.path.join(CHIMERALIB, 'python27.zip'),
+        os.path.join(CHIMERALIB, 'python2.7'),
+        os.path.join(CHIMERALIB, 'python2.7', 'plat-linux2'),
+        os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
+        os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
+        os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
+        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
+
+    # Set Tcl/Tk for gui mode
+    if 'TCL_LIBRARY' in os.environ:
+        os.environ['CHIMERA_TCL_LIBRARY'] = os.environ['TCL_LIBRARY']
+    os.environ['TCL_LIBRARY'] = os.path.join(CHIMERALIB, 'tcl8.6')
+    if 'TCLLIBPATH' in os.environ:
+        os.environ['CHIMERA_TCLLIBPATH'] = os.environ['TCLLIBPATH']
+    os.environ['TCLLIBPATH'] = '{' + CHIMERALIB + '}'
+    if 'TK_LIBRARY' in os.environ:
+        os.environ['CHIMERA_TK_LIBRARY'] = os.environ['TK_LIBRARY']
+        del os.environ['TK_LIBRARY']
+    if 'TIX_LIBRARY' in os.environ:
+        os.environ['CHIMERA_TIX_LIBRARY'] = os.environ['TIX_LIBRARY']
+        del os.environ['TIX_LIBRARY']
+    if 'PYTHONNOUSERSITE' in os.environ:
+        os.environ['CHIMERA_PYTHONNOUSERSITE'] = os.environ['PYTHONNOUSERSITE']
+    os.environ['PYTHONNOUSERSITE'] = '1'
+
+    # Load Chimera libraries
+    if sys.platform == 'win32':
+        os.environ['PATH'] += ":" + CHIMERALIB
+    elif sys.platform == 'darwin':
+        try:
+            OLDLIB = os.environ['DYLD_LIBRARY_PATH']
+        except KeyError:
+            os.environ['DYLD_LIBRARY_PATH'] = CHIMERALIB
         else:
-            os.environ['PYTHONPATH'] = \
-                ":".join([os.path.join(CHIMERA, 'share'),
-                          os.path.join(CHIMERALIB, 'python27.zip'),
-                          os.path.join(CHIMERALIB, 'python2.7'),
-                          os.path.join(CHIMERALIB, 'python2.7', 'idlelib'),
-                          os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
-                          os.path.join(CHIMERALIB, 'python2.7', 'site-packages')]
-                         + sys.path)
+            os.environ['CHIMERA_DYLD_LIBRARY_PATH'] = OLDLIB
+            os.environ['DYLD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
 
-            # Set Tcl/Tk for gui mode
-            if 'TCL_LIBRARY' in os.environ:
-                os.environ['CHIMERA_TCL_LIBRARY'] = os.environ['TCL_LIBRARY']
-            os.environ['TCL_LIBRARY'] = os.path.join(CHIMERALIB, 'tcl8.6')
-            if 'TCLLIBPATH' in os.environ:
-                os.environ['CHIMERA_TCLLIBPATH'] = os.environ['TCLLIBPATH']
-            os.environ['TCLLIBPATH'] = '{' + CHIMERALIB + '}'
-
-            if 'TK_LIBRARY' in os.environ:
-                os.environ['CHIMERA_TK_LIBRARY'] = os.environ['TK_LIBRARY']
-                del os.environ['TK_LIBRARY']
-            if 'TIX_LIBRARY' in os.environ:
-                os.environ['CHIMERA_TIX_LIBRARY'] = os.environ['TIX_LIBRARY']
-                del os.environ['TIX_LIBRARY']
-            if 'PYTHONNOUSERSITE' in os.environ:
-                os.environ['CHIMERA_PYTHONNOUSERSITE'] = os.environ['PYTHONNOUSERSITE']
-            os.environ['PYTHONNOUSERSITE'] = '1'
-
-        # Load Chimera libraries
-        if sys.platform == 'win32':
-            os.environ['PATH'] += ":" + CHIMERALIB
-        elif sys.platform == 'darwin':
-            try:
-                OLDLIB = os.environ['DYLD_LIBRARY_PATH']
-            except KeyError:
-                os.environ['DYLD_LIBRARY_PATH'] = CHIMERALIB, OLDLIB
-            else:
-                os.environ['CHIMERA_DYLD_LIBRARY_PATH'] = OLDLIB
-                os.environ['DYLD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
+        try:
+            OLD_FALLBACK_LIB = os.environ['DYLD_FALLBACK_LIBRARY_PATH']
+        except KeyError:
+            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB
         else:
-            try:
-                OLDLIB = os.environ['LD_LIBRARY_PATH']
-            except KeyError:
-                os.environ['LD_LIBRARY_PATH'] = CHIMERALIB
-            else:
-                os.environ['CHIMERA_LD_LIBRARY_PATH'] = OLDLIB
-                os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
+            os.environ['CHIMERA_DYLD_FALLBACK_LIBRARY_PATH'] = OLD_FALLBACK_LIB
+            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB + ':' + OLD_FALLBACK_LIB
 
-        # Check interactive and IPython
-        if in_ipython() and hasattr(sys, 'ps1') and not sys.argv[0].endswith('ipython'):
-            sys.argv.insert(1, 'ipython')
+        try:
+            OLD_FRAMEWORK_LIB = os.environ['DYLD_FRAMEWORK_PATH']
+        except KeyError:
+            os.environ['DYLD_FRAMEWORK_PATH'] = CHIMERALIB
+        else:
+            os.environ['CHIMERA_DYLD_FRAMEWORK_PATH'] = OLD_FRAMEWORK_LIB
+            os.environ['DYLD_FRAMEWORK_PATH'] = CHIMERALIB + ':' + OLD_FRAMEWORK_LIB
+    else:
+        try:
+            OLDLIB = os.environ['LD_LIBRARY_PATH']
+        except KeyError:
+            os.environ['LD_LIBRARY_PATH'] = CHIMERALIB
+        else:
+            os.environ['CHIMERA_LD_LIBRARY_PATH'] = OLDLIB
+            os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
 
-        os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
+    os.environ['TERM'] = "xterm-256color"
+
+    # Check interactive and IPython
+    if in_ipython() and hasattr(sys, 'ps1') and not sys.argv[0].endswith('ipython'):
+        sys.argv.insert(1, 'ipython')
+
+    os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 
 def enable_chimera(verbose=False, nogui=True):
@@ -107,6 +122,7 @@ def enable_chimera(verbose=False, nogui=True):
     nogui : bool, optional, default=True
         Don't start the GUI.
     """
+    patch_sys_version()
     try:
         import chimeraInit
     except ImportError as e:
@@ -117,6 +133,7 @@ def enable_chimera(verbose=False, nogui=True):
     del chimeraInit
 
 load_chimera = enable_chimera
+
 
 def guess_chimera_path():
     """
@@ -180,6 +197,13 @@ def search_chimera(binary, directories, prefix):
     raise IOError  # 404 - Chimera not found
 
 
+def patch_sys_version():
+    """ Remove Continuum copyright statement to avoid parsing errors in IDLE """
+    if '|' in sys.version:
+        sys_version = sys.version.split('|')
+        sys.version = ' '.join([sys_version[0].strip(), sys_version[-1].strip()])
+
+
 def parse_cli_options(argv=None):
     parser = ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
     parser.add_argument('-i', action='store_true', dest='interactive', default=False,
@@ -228,7 +252,6 @@ def check_ipython(command, args):
         print('Remember to call pychimera.enable_chimera() from a cell!')
         print('-'*56)
         launch_ipython(['notebook'] + args)
-
 
 
 def launch_ipython(argv=None):
