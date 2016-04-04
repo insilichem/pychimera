@@ -18,7 +18,7 @@ import sys
 import subprocess
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 3)
+__version_info__ = (0, 1, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -30,6 +30,7 @@ def patch_environ(nogui=True):
     won't catch the new LD_LIBRARY_PATH (or platform equivalent) and Chimera won't find its
     libraries during import.
     """
+    patch_sys_version()
     if 'CHIMERA' in os.environ:
         return
 
@@ -38,7 +39,7 @@ def patch_environ(nogui=True):
     os.environ['PYTHONPATH'] = ":".join([
         CHIMERALIB,
         os.path.join(CHIMERA, 'share'),
-        os.path.join(CHIMERA, 'share'),
+        os.path.join(CHIMERA, 'bin'),
         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'setuptools-3.1-py2.7.egg'),
         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
         os.path.join(CHIMERALIB, 'python27.zip'),
@@ -71,28 +72,24 @@ def patch_environ(nogui=True):
         os.environ['PATH'] += ":" + CHIMERALIB
     elif sys.platform == 'darwin':
         try:
-            OLDLIB = os.environ['DYLD_LIBRARY_PATH']
-        except KeyError:
-            os.environ['DYLD_LIBRARY_PATH'] = CHIMERALIB
-        else:
-            os.environ['CHIMERA_DYLD_LIBRARY_PATH'] = OLDLIB
-            os.environ['DYLD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
-
-        try:
             OLD_FALLBACK_LIB = os.environ['DYLD_FALLBACK_LIBRARY_PATH']
         except KeyError:
             os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB
         else:
             os.environ['CHIMERA_DYLD_FALLBACK_LIBRARY_PATH'] = OLD_FALLBACK_LIB
-            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB + ':' + OLD_FALLBACK_LIB
+            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLD_FALLBACK_LIB])
 
         try:
             OLD_FRAMEWORK_LIB = os.environ['DYLD_FRAMEWORK_PATH']
         except KeyError:
-            os.environ['DYLD_FRAMEWORK_PATH'] = CHIMERALIB
+            os.environ['DYLD_FRAMEWORK_PATH'] = os.path.join(CHIMERA, 'frameworks')
         else:
             os.environ['CHIMERA_DYLD_FRAMEWORK_PATH'] = OLD_FRAMEWORK_LIB
-            os.environ['DYLD_FRAMEWORK_PATH'] = CHIMERALIB + ':' + OLD_FRAMEWORK_LIB
+            os.environ['DYLD_FRAMEWORK_PATH'] = ':'.join([os.path.join(CHIMERA, 'frameworks'),
+                                                          OLD_FRAMEWORK_LIB])
+
+        os.environ['FONTCONFIG_FILE'] = '/usr/X11/lib/X11/fonts/fonts.conf'
+        sys.executable = os.path.join(CHIMERA, 'bin', 'python2.7')
     else:
         try:
             OLDLIB = os.environ['LD_LIBRARY_PATH']
@@ -122,7 +119,6 @@ def enable_chimera(verbose=False, nogui=True):
     nogui : bool, optional, default=True
         Don't start the GUI.
     """
-    patch_sys_version()
     try:
         import chimeraInit
     except ImportError as e:
@@ -146,7 +142,7 @@ def guess_chimera_path():
     """
     # First, check if environment variable is already present
     if 'CHIMERADIR' in os.environ:
-        return os.environ['CHIMERADIR']
+        return os.environ['CHIMERADIR'],
 
     # No luck... try workarounds
     if sys.platform.startswith('win') or sys.platform == 'cygwin':
