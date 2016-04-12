@@ -33,14 +33,13 @@ def patch_environ(nogui=True):
     patch_sys_version()
     if 'CHIMERA' in os.environ:
         return
-
+   
     os.environ['CHIMERA'] = CHIMERA = guess_chimera_path()[-1]
     CHIMERALIB = os.path.join(CHIMERA, 'lib')
     os.environ['PYTHONPATH'] = ":".join([
         CHIMERALIB,
         os.path.join(CHIMERA, 'share'),
         os.path.join(CHIMERA, 'bin'),
-        os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'setuptools-3.1-py2.7.egg'),
         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
         os.path.join(CHIMERALIB, 'python27.zip'),
         os.path.join(CHIMERALIB, 'python2.7'),
@@ -48,7 +47,7 @@ def patch_environ(nogui=True):
         os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
         os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
         os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
-        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
+        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')] + sys.path)
 
     # Set Tcl/Tk for gui mode
     if 'TCL_LIBRARY' in os.environ:
@@ -151,6 +150,9 @@ def guess_chimera_path():
     elif sys.platform.startswith('linux'):
         binary, prefix = 'chimera', 'UCSF-Chimera'
         directories = [os.path.expanduser('~/.local')]
+    elif sys.platform.startswith('darwin'):
+        binary, prefix = 'chimera', 'Chimera.app'
+        directories = ['/Applications/*/Contents/Resources']
     else:
         sys.exit('ERROR: Platform not supported.\nPlease, create an environment'
                  'variable CHIMERADIR set to your Chimera installation path.')
@@ -186,7 +188,6 @@ def search_chimera(binary, directories, prefix):
     except (OSError, subprocess.CalledProcessError, RuntimeError):
         for basedir in directories:
             paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix+'*')))
-            print(paths)
             if paths:
                 paths.sort()
                 return paths
