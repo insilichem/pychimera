@@ -1,6 +1,6 @@
 package:
   name: pychimera
-  version: "0.1.4"
+  version: "0.1.5"
 
 about:
   home: https://github.com/insilichem/pychimera
