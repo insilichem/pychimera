@@ -145,23 +145,25 @@ def guess_chimera_path():
 
     # No luck... try workarounds
     if sys.platform.startswith('win') or sys.platform == 'cygwin':
-        binary, prefix = 'chimera.exe', 'Chimera'
+        binary, prefix = 'chimera.exe', 'Chimera*'
         directories = map(os.getenv, ('PROGRAMFILES', 'PROGRAMFILES(X86)', 'PROGRAMW6432'))
     elif sys.platform.startswith('linux'):
-        binary, prefix = 'chimera', 'UCSF-Chimera'
+        binary, prefix = 'chimera', 'UCSF-Chimera*'
         directories = [os.path.expanduser('~/.local')]
     elif sys.platform.startswith('darwin'):
-        binary, prefix = 'chimera', 'Chimera.app'
-        directories = ['/Applications/*/Contents/Resources']
+        binary, prefix = 'chimera', 'Chimera*/Contents/Resources'
+        directories = ['/Applications', os.path.expanduser('~/.local'), os.path.expanduser('~/Desktop')]
     else:
-        sys.exit('ERROR: Platform not supported.\nPlease, create an environment'
-                 'variable CHIMERADIR set to your Chimera installation path.')
+        sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
+                 'variable CHIMERADIR set to your Chimera installation path, or '
+                 'softlink the chimera binary to somewhere in your $PATH.')
 
     try:
         return search_chimera(binary, directories, prefix)
     except IOError:  # 404 - Chimera not found!
-        sys.exit('ERROR: Chimera installation path could not be found.\nPlease, '
-                 'create an environment variable CHIMERADIR with such path.')
+        sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
+                 'variable CHIMERADIR set to your Chimera installation path, or '
+                 'softlink the chimera binary to somewhere in your $PATH.')
 
 
 def search_chimera(binary, directories, prefix):
@@ -185,9 +187,9 @@ def search_chimera(binary, directories, prefix):
     """
     try:
         return subprocess.check_output([binary, '--root']).decode('utf-8').strip(),
-    except (OSError, subprocess.CalledProcessError, RuntimeError):
+    except (OSError, subprocess.CalledProcessError, RuntimeError, ValueError):
         for basedir in directories:
-            paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix+'*')))
+            paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix)))
             if paths:
                 paths.sort()
                 return paths
