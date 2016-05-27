@@ -16,6 +16,10 @@ import os
 import runpy
 import sys
 import subprocess
+import platform
+import re
+# Prevent complains from standard interpreters when launched from Continuum builds
+platform._sys_version_parser = re.compile(r'([\w.+]+)\s*(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*\[([^\]]+)\]?')
 
 __author__ = "Jaime Rodríguez-Guerra"
 __version_info__ = (0, 1, 6)
