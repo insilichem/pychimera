@@ -22,11 +22,11 @@ import re
 platform._sys_version_parser = re.compile(r'([\w.+]+)\s*(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*\[([^\]]+)\]?')
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 6)
+__version_info__ = (0, 1, 7)
 __version__ = '.'.join(map(str, __version_info__))
 
 
-def patch_environ(nogui=True):
+def patch_environ(try_headless=False):
     """
     Patch current environment variables so Chimera can start up and we can import its modules.
 
@@ -34,14 +34,20 @@ def patch_environ(nogui=True):
     won't catch the new LD_LIBRARY_PATH (or platform equivalent) and Chimera won't find its
     libraries during import.
     """
-    patch_sys_version()
     if 'CHIMERA' in os.environ:
         return
    
-    os.environ['CHIMERA'] = CHIMERA = guess_chimera_path()[-1]
+    paths = guess_chimera_path(common_locations=try_headless)
+    CHIMERA = paths[-1]
+    if try_headless:
+        try:
+            CHIMERA = next(p for p in paths if 'headless' in p)
+        except StopIteration:
+            pass
+    os.environ['CHIMERA'] = CHIMERA
     CHIMERALIB = os.path.join(CHIMERA, 'lib')
-    os.environ['PYTHONPATH'] = ":".join([
-        CHIMERALIB,
+    os.environ['PYTHONPATH'] = ":".join(sys.path +
+        [CHIMERALIB,
         os.path.join(CHIMERA, 'share'),
         os.path.join(CHIMERA, 'bin'),
         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
@@ -51,7 +57,7 @@ def patch_environ(nogui=True):
         os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
         os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
         os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
-        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')] + sys.path)
+        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
 
     # Set Tcl/Tk for gui mode
     if 'TCL_LIBRARY' in os.environ:
@@ -134,7 +140,7 @@ def enable_chimera(verbose=False, nogui=True):
 load_chimera = enable_chimera
 
 
-def guess_chimera_path():
+def guess_chimera_path(common_locations=False):
     """
     Try to guess Chimera installation path.
 
@@ -147,7 +153,6 @@ def guess_chimera_path():
     if 'CHIMERADIR' in os.environ:
         return os.environ['CHIMERADIR'],
 
-    # No luck... try workarounds
     if sys.platform.startswith('win') or sys.platform == 'cygwin':
         binary, prefix = 'chimera.exe', 'Chimera*'
         directories = map(os.getenv, ('PROGRAMFILES', 'PROGRAMFILES(X86)', 'PROGRAMW6432'))
@@ -163,14 +168,15 @@ def guess_chimera_path():
                  'softlink the chimera binary to somewhere in your $PATH.')
 
     try:
-        return search_chimera(binary, directories, prefix)
+        return search_chimera(binary, directories, prefix, common_locations=common_locations)
     except IOError:  # 404 - Chimera not found!
         sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
                  'variable CHIMERADIR set to your Chimera installation path, or '
                  'softlink the chimera binary to somewhere in your $PATH.')
 
+    
 
-def search_chimera(binary, directories, prefix):
+def search_chimera(binary, directories, prefix, common_locations=False):
     """
     Try running ``chimera --root`` in Chimera happens to be in PATH, otherwise
     traverse usual installation locations to find the Chimera root path.
@@ -189,15 +195,19 @@ def search_chimera(binary, directories, prefix):
     paths : list of str
         Sorted list of Chimera paths
     """
+    paths = []
     try:
-        return subprocess.check_output([binary, '--root']).decode('utf-8').strip(),
+        paths.append(subprocess.check_output([binary, '--root']).decode('utf-8').strip())
     except (OSError, subprocess.CalledProcessError, RuntimeError, ValueError):
+        common_locations = True
+    if common_locations:
         for basedir in directories:
-            paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix)))
-            if paths:
-                paths.sort()
-                return paths
-    raise IOError  # 404 - Chimera not found
+            found_paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix)))
+            if found_paths:
+                found_paths.sort()
+                found_paths.reverse()
+                paths.extend(found_paths)
+    return paths
 
 
 def patch_sys_version():
@@ -205,6 +215,8 @@ def patch_sys_version():
     if '|' in sys.version:
         sys_version = sys.version.split('|')
         sys.version = ' '.join([sys_version[0].strip(), sys_version[-1].strip()])
+        
+        # sys.version = original_sys_version
 
 
 def parse_cli_options(argv=None):
@@ -287,6 +299,41 @@ def interactive_mode(interactive_flag=False):
     """
     return any([interactive_flag, sys.flags.interactive, len(sys.argv) <= 1])
 
+def enable_chimera_inline():
+    from IPython.display import IFrame
+    from IPython.core.magic import register_line_magic
+    import chimera, Midas
+    @register_line_magic
+    def chimera_view(line):
+        if chimera.viewer.__class__.__name__ == 'NoGuiViewer':
+            print('This magic requires a headless Chimera build. '
+                  'Check http://www.cgl.ucsf.edu/chimera/download.html#unsupported.',
+                  file=sys.stderr)
+            return
+        models = eval(line) if line else None
+        def html(*models):
+            if models:
+                for m in chimera.openModels.list():
+                    m.display = False
+                chimera.selection.clearCurrent()
+                for model in models:
+                    model.display = True
+                    chimera.selection.addCurrent(model)
+                    chimera.runCommand('focus sel')
+            chimera.viewer.windowSize = 800, 600
+            path = 'chimera_scene_export.html'
+            Midas.export(filename=path, format='WebGL')
+            return IFrame(path, *[x + 20 for x in chimera.viewer.windowSize])
+        return html(*models)
+    del chimera_view
+
+    @register_line_magic
+    def chimera_run(line):
+        if not line:
+            print("Usage: %chimera_run <chimera command>", file=sys.stderr)
+            return
+        chimera.runCommand(line)
+    del chimera_run
 
 def main():
     """
@@ -296,8 +343,9 @@ def main():
     4. Load Chimera. IPython can import it now!
     5. Run any additional CLI arguments (-m, -c, -f), if needed
     """
+    patch_sys_version()
     args, more_args = parse_cli_options()
-    patch_environ(nogui=args.nogui)
+    patch_environ(try_headless='notebook' == args.command)
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:
