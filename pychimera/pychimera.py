@@ -18,46 +18,95 @@ import sys
 import subprocess
 import platform
 import re
-# Prevent complains from standard interpreters when launched from Continuum builds
-platform._sys_version_parser = re.compile(r'([\w.+]+)\s*(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*\[([^\]]+)\]?')
 
 __author__ = "Jaime Rodríguez-Guerra"
 __version_info__ = (0, 1, 7)
 __version__ = '.'.join(map(str, __version_info__))
 
+#---------------------------------------------------------------
+# Chimera initializer
+#---------------------------------------------------------------
 
-def patch_environ(try_headless=False):
+
+def enable_chimera(verbose=False, nogui=True):
+    """
+    Bypass script loading and initialize Chimera correctly, once
+    the env has been properly patched.
+
+    Parameters
+    ----------
+    verbose : bool, optional, default=False
+        If True, let Chimera speak freely. It can be _very_ verbose.
+    nogui : bool, optional, default=True
+        Don't start the GUI.
+    """
+    try:
+        import chimeraInit
+    except ImportError as e:
+        sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
+    chimeraInit.init(['', '--script', os.devnull], debug=verbose,
+                     silent=not verbose, nostatus=not verbose,
+                     nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
+    del chimeraInit
+
+load_chimera = enable_chimera
+
+#---------------------------------------------------------------
+# Environment, paths, and more patchers
+#---------------------------------------------------------------
+
+# Prevent complains from standard interpreters when launched from Continuum builds
+platform._sys_version_parser = re.compile(
+    r'([\w.+]+)\s*(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*\[([^\]]+)\]?')
+
+
+def patch_sys_version():
+    """ Remove Continuum copyright statement to avoid parsing errors in IDLE """
+    if '|' in sys.version:
+        sys_version = sys.version.split('|')
+        sys.version = ' '.join([sys_version[0].strip(), sys_version[-1].strip()])
+
+
+def patch_environ(using_notebook=False):
     """
     Patch current environment variables so Chimera can start up and we can import its modules.
 
     Be warned that calling this function WILL restart your interpreter. Otherwise, Python
     won't catch the new LD_LIBRARY_PATH (or platform equivalent) and Chimera won't find its
     libraries during import.
+
+    Parameters
+    ----------
+    using_notebook : bool, optional, default=False
+        If a Jupyter Notebook instance has been requested, try to locate a headless
+        Chimera build to enable inline Chimera visualization.
     """
     if 'CHIMERA' in os.environ:
         return
-   
-    paths = guess_chimera_path(common_locations=try_headless)
-    CHIMERA = paths[-1]
-    if try_headless:
+
+    paths = guess_chimera_path(common_locations=using_notebook)
+    CHIMERA = paths[0]
+    if using_notebook:
         try:
             CHIMERA = next(p for p in paths if 'headless' in p)
         except StopIteration:
             pass
+
     os.environ['CHIMERA'] = CHIMERA
     CHIMERALIB = os.path.join(CHIMERA, 'lib')
-    os.environ['PYTHONPATH'] = ":".join(sys.path +
+    os.environ['PYTHONPATH'] = ":".join(
+        [os.path.join(CHIMERA, 'share'),
+         os.path.join(CHIMERA, 'bin')] +
+        (sys.path if using_notebook else []) +
         [CHIMERALIB,
-        os.path.join(CHIMERA, 'share'),
-        os.path.join(CHIMERA, 'bin'),
-        os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
-        os.path.join(CHIMERALIB, 'python27.zip'),
-        os.path.join(CHIMERALIB, 'python2.7'),
-        os.path.join(CHIMERALIB, 'python2.7', 'plat-linux2'),
-        os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
-        os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
-        os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
-        os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
+         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
+         os.path.join(CHIMERALIB, 'python27.zip'),
+         os.path.join(CHIMERALIB, 'python2.7'),
+         os.path.join(CHIMERALIB, 'python2.7', 'plat-linux2'),
+         os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
+         os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
+         os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
+         os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
 
     # Set Tcl/Tk for gui mode
     if 'TCL_LIBRARY' in os.environ:
@@ -96,9 +145,8 @@ def patch_environ(try_headless=False):
             os.environ['CHIMERA_DYLD_FRAMEWORK_PATH'] = OLD_FRAMEWORK_LIB
             os.environ['DYLD_FRAMEWORK_PATH'] = ':'.join([os.path.join(CHIMERA, 'frameworks'),
                                                           OLD_FRAMEWORK_LIB])
-
-        os.environ['FONTCONFIG_FILE'] = '/usr/X11/lib/X11/fonts/fonts.conf'
         sys.executable = os.path.join(CHIMERA, 'bin', 'python2.7')
+        os.environ['FONTCONFIG_FILE'] = '/usr/X11/lib/X11/fonts/fonts.conf'
     else:
         try:
             OLDLIB = os.environ['LD_LIBRARY_PATH']
@@ -117,32 +165,15 @@ def patch_environ(try_headless=False):
     os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 
-def enable_chimera(verbose=False, nogui=True):
-    """
-    Bypass script loading and initialize Chimera correctly.
-
-    Parameters
-    ----------
-    verbose : bool, optional, default=False
-        If True, let Chimera speak freely. It can be _very_ verbose.
-    nogui : bool, optional, default=True
-        Don't start the GUI.
-    """
-    try:
-        import chimeraInit
-    except ImportError as e:
-        sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
-    chimeraInit.init(['', '--script', os.devnull], debug=verbose,
-                     silent=not verbose, nostatus=not verbose,
-                     nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
-    del chimeraInit
-
-load_chimera = enable_chimera
-
-
 def guess_chimera_path(common_locations=False):
     """
     Try to guess Chimera installation path.
+
+    Parameters
+    ----------
+    common_locations : bool, optional, default=False
+        If no CHIMERADIR env var is set, collect all posible
+        locations of Chimera installations.
 
     Returns
     -------
@@ -161,7 +192,8 @@ def guess_chimera_path(common_locations=False):
         directories = [os.path.expanduser('~/.local')]
     elif sys.platform.startswith('darwin'):
         binary, prefix = 'chimera', 'Chimera*/Contents/Resources'
-        directories = ['/Applications', os.path.expanduser('~/.local'), os.path.expanduser('~/Desktop')]
+        directories = [
+            '/Applications', os.path.expanduser('~/.local'), os.path.expanduser('~/Desktop')]
     else:
         sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
                  'variable CHIMERADIR set to your Chimera installation path, or '
@@ -174,7 +206,6 @@ def guess_chimera_path(common_locations=False):
                  'variable CHIMERADIR set to your Chimera installation path, or '
                  'softlink the chimera binary to somewhere in your $PATH.')
 
-    
 
 def search_chimera(binary, directories, prefix, common_locations=False):
     """
@@ -189,11 +220,16 @@ def search_chimera(binary, directories, prefix, common_locations=False):
         Usual installation locations in this platform
     prefix : str
         Root directory prefix name in this platform
+    common_locations : bool, optional, default=False
+        Collect all posible locations of Chimera installations, even if a 
+        binary has been found.
 
     Returns
     -------
     paths : list of str
-        Sorted list of Chimera paths
+        Sorted list of Chimera paths. If found, the first one is the one returned
+        by the binary call. Next items are the ones found in `directories`, sorted
+        by descendent order.
     """
     paths = []
     try:
@@ -209,14 +245,9 @@ def search_chimera(binary, directories, prefix, common_locations=False):
                 paths.extend(found_paths)
     return paths
 
-
-def patch_sys_version():
-    """ Remove Continuum copyright statement to avoid parsing errors in IDLE """
-    if '|' in sys.version:
-        sys_version = sys.version.split('|')
-        sys.version = ' '.join([sys_version[0].strip(), sys_version[-1].strip()])
-        
-        # sys.version = original_sys_version
+#---------------------------------------------------------------
+# CLI stuff
+#---------------------------------------------------------------
 
 
 def parse_cli_options(argv=None):
@@ -255,6 +286,10 @@ def run_cli_options(args):
     if interactive_mode(args.interactive):
         os.environ['PYTHONINSPECT'] = 'yes'
 
+#---------------------------------------------------------------
+# IPython, Jupyter and Notebook stuff
+#---------------------------------------------------------------
+
 
 def check_ipython(command, args):
     """
@@ -263,27 +298,68 @@ def check_ipython(command, args):
     if command == 'ipython':
         launch_ipython(args)
     elif command == 'notebook':
-        print('-'*56)
-        print('Remember to call pychimera.enable_chimera() from a cell!')
-        print('-'*56)
-        launch_ipython(['notebook'] + args)
+        launch_notebook(args)
 
 
 def launch_ipython(argv=None):
     """
-    Launch IPython from this interpreter with custom args if needed
+    Launch IPython from this interpreter with custom args if needed.
+    Chimera magic commands are also enabled automatically.
     """
     try:
-        from IPython.terminal.ipapp import launch_new_instance
+        from IPython.terminal.ipapp import TerminalIPythonApp
+        from traitlets.config import Config
     except ImportError:
-        sys.exit("ERROR: IPython not installed in this environment.")
+        sys.exit("ERROR: IPython not installed in this environment. "
+                 "Try with `conda install ipython`")
     else:
-        try:
-            launch_new_instance(argv)
-        except ImportError as e:
-            if 'notebook' in str(e):
-                sys.exit("ERROR: IPython notebook not installed in this environment.")
-            raise
+        # launch_new_instance(argv)
+        app = TerminalIPythonApp()
+        c = Config()
+        code = ["from pychimera import enable_chimera_inline",
+                "enable_chimera_inline()"]
+        c.InteractiveShellApp.exec_lines = code
+        app.update_config(c)
+        app.initialize(argv)
+        app.start()
+
+
+def launch_notebook(argv=None):
+    """
+    Launch a Jupyter Notebook, with custom Untitled filenames and
+    a prepopulated first cell with necessary boilerplate code.
+
+    Notes
+    -----
+    To populate the first cell, the function `new_notebook` imported
+    in notebook.services.contents needs to be monkey patched. Dirty
+    but functional. Same thing could be achieved with custom.js or
+    a ContentsManager subclass, but this is easier!
+    """
+    try:
+        import nbformat.v4 as nbf
+        from notebook.notebookapp import NotebookApp
+        from notebook.services.contents import manager
+        from traitlets.config import Config
+    except ImportError:
+        sys.exit("ERROR: Jupyter Notebook not installed in this environment. "
+                 "Try with `conda install ipython jupyter notebook`")
+    else:
+        nbf._original_new_notebook = nbf.new_notebook
+        def _prepopulate_nb_patch():
+            nb = nbf._original_new_notebook()
+            cell = nbf.new_code_cell("# Run this cell to complete Chimera initialization\n"
+                                     "from pychimera import enable_chimera, enable_chimera_inline\n"
+                                     "enable_chimera()\nenable_chimera_inline()")
+            nb['cells'].append(cell)
+            return nb
+        manager.new_notebook = _prepopulate_nb_patch
+        app = NotebookApp()
+        c = Config()
+        c.FileContentsManager.untitled_notebook = "Untitled PyChimera Notebook"
+        app.update_config(c)
+        app.initialize(argv)
+        app.start()
 
 
 def in_ipython():
@@ -299,10 +375,24 @@ def interactive_mode(interactive_flag=False):
     """
     return any([interactive_flag, sys.flags.interactive, len(sys.argv) <= 1])
 
+
 def enable_chimera_inline():
+    """
+    Enable IPython magic commands to run some Chimera actions
+
+    Currently supported:
+    - %chimera_view [<model>]: 
+        Depicts the Chimera 3D canvas in a WebGL iframe. Requires
+        a headless Chimera build and a Notebook instance.
+    - %chimera_run <command>:
+        Runs Chimera commands meant to be input in the GUI command line
+    """
+
     from IPython.display import IFrame
     from IPython.core.magic import register_line_magic
-    import chimera, Midas
+    import chimera
+    import Midas
+
     @register_line_magic
     def chimera_view(line):
         if chimera.viewer.__class__.__name__ == 'NoGuiViewer':
@@ -310,7 +400,8 @@ def enable_chimera_inline():
                   'Check http://www.cgl.ucsf.edu/chimera/download.html#unsupported.',
                   file=sys.stderr)
             return
-        models = eval(line) if line else None
+        models = eval(line) if line else []
+
         def html(*models):
             if models:
                 for m in chimera.openModels.list():
@@ -335,6 +426,7 @@ def enable_chimera_inline():
         chimera.runCommand(line)
     del chimera_run
 
+
 def main():
     """
     1. Parse CLI arguments.
@@ -345,12 +437,13 @@ def main():
     """
     patch_sys_version()
     args, more_args = parse_cli_options()
-    patch_environ(try_headless='notebook' == args.command)
+    patch_environ(using_notebook=args.command == 'notebook')
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:
         check_ipython(args.command, more_args)
         run_cli_options(args)
+
 
 if "__main__" == __name__:
     main()
