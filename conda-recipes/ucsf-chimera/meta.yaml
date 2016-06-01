@@ -1,0 +1,20 @@
+package:
+  name: ucsf-chimera
+  version: "1.11"
+
+about:
+  home: https://rbvi.ucsf.edu/chimera/
+  license: MIT
+  summary: Extensible Molecular Modeling System
+
+requirements:
+  build:
+    - curl
+    - unxutils  # [win]
+
+#   run:
+#     - python 2.7*
+
+# test:
+#   imports:
+#     - pychimera
