@@ -1,6 +1,6 @@
 package:
   name: pychimera
-  version: "0.1.7"
+  version: "0.1.8"
 
 about:
   home: https://github.com/insilichem/pychimera
@@ -21,3 +21,6 @@ requirements:
 test:
   imports:
     - pychimera
+  commands:
+    - python -m pychimera -c "import chimera"
+    - pychimera -c "import chimera"
