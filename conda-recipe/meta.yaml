@@ -22,5 +22,4 @@ test:
   imports:
     - pychimera
   commands:
-    - python -m pychimera -c "import chimera"
     - pychimera -c "import chimera"
