@@ -24,7 +24,7 @@ except ImportError:
     from StringIO import StringIO
 
 __author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 8)
+__version_info__ = (0, 1, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
 #---------------------------------------------------------------
@@ -483,7 +483,6 @@ def main():
     if args.nogui:
         check_ipython(args.command, more_args)
         run_cli_options(args)
-
 
 if "__main__" == __name__:
     main()

@@ -4,7 +4,7 @@
 from setuptools import setup
 import os
 
-VERSION = "0.1.8"
+VERSION = "0.1.9"
 
 
 def read(fname):
@@ -32,5 +32,7 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
-    scripts=['scripts/pychimera']
+    entry_points = {
+        'console_scripts': ['pychimera=pychimera:main'],
+    }
 )
