@@ -18,6 +18,7 @@ import sys
 import subprocess
 import platform
 import re
+import tempfile
 try:
     from cStringIO import StringIO
 except ImportError:
@@ -48,10 +49,18 @@ def enable_chimera(verbose=False, nogui=True):
         import chimeraInit
     except ImportError as e:
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
-    chimeraInit.init(['', '--script', os.devnull], debug=verbose,
+    # os.devnull is not supported in Windows... dirty workaround
+    if sys.platform == 'win32':
+        _, blank = tempfile.mkstemp(suffix='.py')
+    else:
+        blank = os.devnull
+    chimeraInit.init(['', '--script', blank], debug=verbose,
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
+    if blank is not os.devnull:
+        pass # remove tmpfile!
     del chimeraInit
+
 
 load_chimera = enable_chimera
 
@@ -95,12 +104,13 @@ def patch_environ(using_notebook=False):
             CHIMERA = next(p for p in paths if 'headless' in p)
         except StopIteration:
             pass
-
+    
     os.environ['CHIMERA'] = CHIMERA
     CHIMERALIB = os.path.join(CHIMERA, 'lib')
-    os.environ['PYTHONPATH'] = ":".join(
+    
+    os.environ['PYTHONPATH'] = ':'.join(
         [os.path.join(CHIMERA, 'share'),
-         os.path.join(CHIMERA, 'bin')] +
+         os.path.join(CHIMERA, 'bin')]  +
         (sys.path if using_notebook else []) +
         [CHIMERALIB,
          os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
@@ -129,45 +139,71 @@ def patch_environ(using_notebook=False):
         os.environ['CHIMERA_PYTHONNOUSERSITE'] = os.environ['PYTHONNOUSERSITE']
     os.environ['PYTHONNOUSERSITE'] = '1'
 
-    # Load Chimera libraries
-    if sys.platform == 'win32':
-        os.environ['PATH'] += ":" + CHIMERALIB
-    elif sys.platform == 'darwin':
-        try:
-            OLD_FALLBACK_LIB = os.environ['DYLD_FALLBACK_LIBRARY_PATH']
-        except KeyError:
-            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB
-        else:
-            os.environ['CHIMERA_DYLD_FALLBACK_LIBRARY_PATH'] = OLD_FALLBACK_LIB
-            os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLD_FALLBACK_LIB])
-
-        try:
-            OLD_FRAMEWORK_LIB = os.environ['DYLD_FRAMEWORK_PATH']
-        except KeyError:
-            os.environ['DYLD_FRAMEWORK_PATH'] = os.path.join(CHIMERA, 'frameworks')
-        else:
-            os.environ['CHIMERA_DYLD_FRAMEWORK_PATH'] = OLD_FRAMEWORK_LIB
-            os.environ['DYLD_FRAMEWORK_PATH'] = ':'.join([os.path.join(CHIMERA, 'frameworks'),
-                                                          OLD_FRAMEWORK_LIB])
-        sys.executable = os.path.join(CHIMERA, 'bin', 'python2.7')
-        os.environ['FONTCONFIG_FILE'] = '/usr/X11/lib/X11/fonts/fonts.conf'
-    else:
-        try:
-            OLDLIB = os.environ['LD_LIBRARY_PATH']
-        except KeyError:
-            os.environ['LD_LIBRARY_PATH'] = CHIMERALIB
-        else:
-            os.environ['CHIMERA_LD_LIBRARY_PATH'] = OLDLIB
-            os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
-
-    os.environ['TERM'] = "xterm-256color"
-
     # Check interactive and IPython
     if in_ipython() and hasattr(sys, 'ps1') and not sys.argv[0].endswith('ipython'):
         sys.argv.insert(1, 'ipython')
 
-    os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
+    # Load Chimera libraries
+    if sys.platform == 'win32':
+        os.environ['PATH'] = ';'.join([os.path.join(CHIMERA, 'bin'), os.path.join(CHIMERA, 'bin', 'DLLs'), os.environ['PATH']])
+        os.environ['PYTHONPATH'] = ';'.join(
+            [os.path.join(CHIMERA, 'share'),
+             os.path.join(CHIMERA, 'bin')] +
+            (sys.path if using_notebook else []) +
+            [os.path.join(CHIMERA, 'bin', 'lib', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
+             os.path.join(CHIMERA, 'bin', 'python27.zip'),
+             os.path.join(CHIMERA, 'bin', 'DLLs'),
+             os.path.join(CHIMERA, 'bin', 'lib'),
+             os.path.join(CHIMERA, 'bin', 'lib'),
+             os.path.join(CHIMERA, 'bin', 'lib', 'plat-win'),
+             os.path.join(CHIMERA, 'bin', 'lib', 'lib-tk'),
+             os.path.join(CHIMERA, 'bin', 'lib', 'site-packages'),
+             os.path.join(CHIMERA, 'bin', 'lib', 'site-packages', 'PIL'),
+             os.path.join('C:', 'ProgramData', 'Chimera')])
+    else:
+        os.environ['PYTHONPATH'] = ':'.join(
+            [os.path.join(CHIMERA, 'share'),
+             os.path.join(CHIMERA, 'bin')]  +
+            (sys.path if using_notebook else []) +
+            [CHIMERALIB,
+             os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
+             os.path.join(CHIMERALIB, 'python27.zip'),
+             os.path.join(CHIMERALIB, 'python2.7'),
+             os.path.join(CHIMERALIB, 'python2.7', 'plat-linux2'),
+             os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
+             os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
+             os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
+             os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
+        if sys.platform == 'darwin':
+            try:
+                OLD_FALLBACK_LIB = os.environ['DYLD_FALLBACK_LIBRARY_PATH']
+            except KeyError:
+                os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = CHIMERALIB
+            else:
+                os.environ['CHIMERA_DYLD_FALLBACK_LIBRARY_PATH'] = OLD_FALLBACK_LIB
+                os.environ['DYLD_FALLBACK_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLD_FALLBACK_LIB])
 
+            try:
+                OLD_FRAMEWORK_LIB = os.environ['DYLD_FRAMEWORK_PATH']
+            except KeyError:
+                os.environ['DYLD_FRAMEWORK_PATH'] = os.path.join(CHIMERA, 'frameworks')
+            else:
+                os.environ['CHIMERA_DYLD_FRAMEWORK_PATH'] = OLD_FRAMEWORK_LIB
+                os.environ['DYLD_FRAMEWORK_PATH'] = ':'.join([os.path.join(CHIMERA, 'frameworks'),
+                                                              OLD_FRAMEWORK_LIB])
+            sys.executable = os.path.join(CHIMERA, 'bin', 'python2.7')
+            os.environ['FONTCONFIG_FILE'] = '/usr/X11/lib/X11/fonts/fonts.conf'
+        else:
+            try:
+                OLDLIB = os.environ['LD_LIBRARY_PATH']
+            except KeyError:
+                os.environ['LD_LIBRARY_PATH'] = CHIMERALIB
+            else:
+                os.environ['CHIMERA_LD_LIBRARY_PATH'] = OLDLIB
+                os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
+
+        os.environ['TERM'] = "xterm-256color"
+    os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 def guess_chimera_path(common_locations=False):
     """
@@ -300,7 +336,11 @@ def check_ipython(command, args):
     Check if an IPython launch has been requested from CLI
     """
     if command == 'ipython':
-        launch_ipython(args)
+        if sys.platform == 'win32':
+            launch_ipython_windows(args)
+        else:
+            launch_ipython(args)
+
     elif command == 'notebook':
         launch_notebook(args)
 
@@ -327,6 +367,24 @@ def launch_ipython(argv=None):
         app.initialize(argv)
         app.start()
 
+
+def launch_ipython_windows(argv=None):
+    os.environ = {str(k): str(v) for k,v in os.environ.items()}
+    try:
+        from qtconsole.qtconsoleapp import JupyterQtConsoleApp
+        from traitlets.config import Config
+    except ImportError:
+        sys.exit("ERROR: IPython QTConsole not installed in this environment. "
+                 "Try with `conda install jupyter qtconsole`")
+    else:
+        app = JupyterQtConsoleApp()
+        c = Config()
+        code = ["from pychimera import enable_chimera_inline",
+                "enable_chimera_inline()"]
+        c.InteractiveShellApp.exec_lines = code
+        app.update_config(c)
+        app.initialize(argv)
+        app.start()
 
 def launch_notebook(argv=None):
     """
@@ -477,7 +535,7 @@ def main():
     """
     patch_sys_version()
     args, more_args = parse_cli_options()
-    patch_environ(using_notebook=args.command == 'notebook')
+    patch_environ(using_notebook=args.nogui)
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:
