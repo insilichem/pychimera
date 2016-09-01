@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -71,7 +71,7 @@ def patch_sys_version():
         sys.version = ' '.join([sys_version[0].strip(), sys_version[-1].strip()])
 
 
-def patch_environ(using_notebook=False):
+def patch_environ(nogui=True):
     """
     Patch current environment variables so Chimera can start up and we can import its modules.
 
@@ -81,16 +81,16 @@ def patch_environ(using_notebook=False):
 
     Parameters
     ----------
-    using_notebook : bool, optional, default=False
-        If a Jupyter Notebook instance has been requested, try to locate a headless
+    nogui : bool, optional, default=False
+        If the GUI is not going to be launched, try to locate a headless
         Chimera build to enable inline Chimera visualization.
     """
     if 'CHIMERA' in os.environ:
         return
 
-    paths = guess_chimera_path(common_locations=using_notebook)
+    paths = guess_chimera_path(common_locations=nogui)
     CHIMERA = paths[0]
-    if using_notebook:
+    if nogui:
         try:
             CHIMERA = next(p for p in paths if 'headless' in p)
         except StopIteration:
@@ -101,7 +101,7 @@ def patch_environ(using_notebook=False):
     os.environ['PYTHONPATH'] = ":".join(
         [os.path.join(CHIMERA, 'share'),
          os.path.join(CHIMERA, 'bin')] +
-        (sys.path if using_notebook else []) +
+        (sys.path if nogui else []) +
         [CHIMERALIB,
          os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
          os.path.join(CHIMERALIB, 'python27.zip'),
@@ -477,7 +477,7 @@ def main():
     """
     patch_sys_version()
     args, more_args = parse_cli_options()
-    patch_environ(using_notebook=args.command == 'notebook')
+    patch_environ(nogui=args.nogui)
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:

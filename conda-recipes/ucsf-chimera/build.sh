@@ -34,15 +34,15 @@ download(){
   cd "${SRC_DIR}"
   set +x
   echo 'IMPORTANT: By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!'
-  echo 'IMPORTANT: The license agreement can be found here: https://rbvi.ucsf.edu/chimera/license.html'
+  echo 'IMPORTANT: The license agreement can be found here: http://www.cgl.ucsf.edu/chimera/license.html'
   echo 'IMPORTANT: If you do not agree, please press Ctrl-C now.'
   echo 'IMPORTANT: Downloading in 10 seconds...'
 
   sleep 10
   set -x
-  _download_url="https://rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py"
-  _ident="$(curl -s -F file="${_filepath}" -F choice=Accept "${_download_url}" | grep 'ident' | grep -Po '(?<=value=").*(?=")')"
-  curl -L -F file="${_filepath}" -F ident="${_ident}" -F choice='Notified' -F download='Start Download' "${_download_url}" -o "${_file}"
+  _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py"
+  _download=`curl -s -F file="${_filepath}" -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/'`
+  curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}"
 }
 
 installation_linux() {
