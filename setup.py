@@ -32,7 +32,5 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
-    entry_points = {
-        'console_scripts': ['pychimera=pychimera:main'],
-    }
+    scripts=['scripts/pychimera']
 )
