@@ -149,7 +149,7 @@ def patch_environ(nogui=True):
         os.environ['PYTHONPATH'] = ';'.join(
             [os.path.join(CHIMERA, 'share'),
              os.path.join(CHIMERA, 'bin')] +
-            (sys.path if using_notebook else []) +
+            (sys.path if nogui else []) +
             [os.path.join(CHIMERA, 'bin', 'lib', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
              os.path.join(CHIMERA, 'bin', 'python27.zip'),
              os.path.join(CHIMERA, 'bin', 'DLLs'),
@@ -164,7 +164,7 @@ def patch_environ(nogui=True):
         os.environ['PYTHONPATH'] = ':'.join(
             [os.path.join(CHIMERA, 'share'),
              os.path.join(CHIMERA, 'bin')]  +
-            (sys.path if using_notebook else []) +
+            (sys.path if nogui else []) +
             [CHIMERALIB,
              os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
              os.path.join(CHIMERALIB, 'python27.zip'),
@@ -543,4 +543,4 @@ def main():
         run_cli_options(args)
 
 if "__main__" == __name__:
-    main()
+    sys.exit(main())
