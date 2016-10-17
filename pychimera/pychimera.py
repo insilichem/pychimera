@@ -24,10 +24,6 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-__author__ = "Jaime Rodríguez-Guerra"
-__version_info__ = (0, 1, 10)
-__version__ = '.'.join(map(str, __version_info__))
-
 #---------------------------------------------------------------
 # Chimera initializer
 #---------------------------------------------------------------
@@ -203,6 +199,7 @@ def patch_environ(nogui=True):
                 os.environ['LD_LIBRARY_PATH'] = ':'.join([CHIMERALIB, OLDLIB])
 
         os.environ['TERM'] = "xterm-256color"
+        os.environ['PYTHONWARNINGS'] = "ignore"
     os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 def guess_chimera_path(common_locations=False):

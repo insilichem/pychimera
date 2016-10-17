@@ -3,18 +3,18 @@
 
 from setuptools import setup
 import os
-
-VERSION = "0.1.10"
-
+import versioneer
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+version = versioneer.get_version()
 setup(
     name='pychimera',
-    version=VERSION,
+    version=version,
+    cmdclass=versioneer.get_cmdclass(),
     url='https://github.com/insilichem/pychimera',
-    download_url='https://github.com/insilichem/pychimera/tarball/v' + VERSION,
+    download_url='https://github.com/insilichem/pychimera/tarball/v' + version,
     license='LGPL',
     author="Jaime Rodríguez-Guerra",
     author_email='jaime.rogue@gmail.com',
