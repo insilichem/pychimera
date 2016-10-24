@@ -24,6 +24,10 @@ try:
 except ImportError:
     from StringIO import StringIO
 
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
+
 #---------------------------------------------------------------
 # Chimera initializer
 #---------------------------------------------------------------
@@ -282,6 +286,8 @@ def parse_cli_options(argv=None):
                         help='Enable interactive mode')
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
                         help='Print debug information')
+    parser.add_argument('-V', '--version', action='version', 
+                        version='%(prog)s v{}'.format(__version__))
     parser.add_argument('--gui', action='store_false', dest='nogui', default=True,
                         help='Launch Chimera graphical interface')
 
