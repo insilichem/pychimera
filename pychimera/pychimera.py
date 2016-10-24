@@ -41,6 +41,8 @@ def enable_chimera(verbose=False, nogui=True):
     nogui : bool, optional, default=True
         Don't start the GUI.
     """
+    if os.getenv('CHIMERA_ENABLED'):
+        return
     try:
         import chimeraInit
     except ImportError as e:
@@ -56,7 +58,7 @@ def enable_chimera(verbose=False, nogui=True):
     if blank is not os.devnull:
         pass # remove tmpfile!
     del chimeraInit
-
+    os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
 
@@ -104,20 +106,6 @@ def patch_environ(nogui=True):
     os.environ['CHIMERA'] = CHIMERA
     CHIMERALIB = os.path.join(CHIMERA, 'lib')
     
-    os.environ['PYTHONPATH'] = ':'.join(
-        [os.path.join(CHIMERA, 'share'),
-         os.path.join(CHIMERA, 'bin')] +
-        (sys.path if nogui else []) +
-        [CHIMERALIB,
-         os.path.join(CHIMERALIB, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
-         os.path.join(CHIMERALIB, 'python27.zip'),
-         os.path.join(CHIMERALIB, 'python2.7'),
-         os.path.join(CHIMERALIB, 'python2.7', 'plat-linux2'),
-         os.path.join(CHIMERALIB, 'python2.7', 'lib-tk'),
-         os.path.join(CHIMERALIB, 'python2.7', 'lib-old'),
-         os.path.join(CHIMERALIB, 'python2.7', 'lib-dynload'),
-         os.path.join(CHIMERALIB, 'python2.7', 'site-packages')])
-
     # Set Tcl/Tk for gui mode
     if 'TCL_LIBRARY' in os.environ:
         os.environ['CHIMERA_TCL_LIBRARY'] = os.environ['TCL_LIBRARY']
@@ -141,7 +129,9 @@ def patch_environ(nogui=True):
 
     # Load Chimera libraries
     if sys.platform == 'win32':
-        os.environ['PATH'] = ';'.join([os.path.join(CHIMERA, 'bin'), os.path.join(CHIMERA, 'bin', 'DLLs'), os.environ['PATH']])
+        os.environ['PATH'] = ';'.join([os.path.join(CHIMERA, 'bin'),
+                                       os.path.join(CHIMERA, 'bin', 'DLLs'),
+                                       os.environ['PATH']])
         os.environ['PYTHONPATH'] = ';'.join(
             [os.path.join(CHIMERA, 'share'),
              os.path.join(CHIMERA, 'bin')] +
@@ -221,6 +211,9 @@ def guess_chimera_path(common_locations=False):
     if 'CHIMERADIR' in os.environ:
         return os.environ['CHIMERADIR'],
 
+    exit_message = ('ERROR: Platform not supported.\nPlease, create an environment '
+                    'variable CHIMERADIR set to your Chimera installation path, or '
+                    'softlink the chimera binary to somewhere in your $PATH.')
     if sys.platform.startswith('win') or sys.platform == 'cygwin':
         binary, prefix = 'chimera.exe', 'Chimera*'
         directories = map(os.getenv, ('PROGRAMFILES', 'PROGRAMFILES(X86)', 'PROGRAMW6432'))
@@ -229,19 +222,15 @@ def guess_chimera_path(common_locations=False):
         directories = [os.path.expanduser('~/.local')]
     elif sys.platform.startswith('darwin'):
         binary, prefix = 'chimera', 'Chimera*/Contents/Resources'
-        directories = [
-            '/Applications', os.path.expanduser('~/.local'), os.path.expanduser('~/Desktop')]
+        directories = ['/Applications', os.path.expanduser('~/.local'),
+                       os.path.expanduser('~/Desktop')]
     else:
-        sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
-                 'variable CHIMERADIR set to your Chimera installation path, or '
-                 'softlink the chimera binary to somewhere in your $PATH.')
+        sys.exit(exit_message)
 
     try:
         return search_chimera(binary, directories, prefix, common_locations=common_locations)
     except IOError:  # 404 - Chimera not found!
-        sys.exit('ERROR: Platform not supported.\nPlease, create an environment '
-                 'variable CHIMERADIR set to your Chimera installation path, or '
-                 'softlink the chimera binary to somewhere in your $PATH.')
+        sys.exit(exit_message)
 
 
 def search_chimera(binary, directories, prefix, common_locations=False):
@@ -383,6 +372,7 @@ def launch_ipython_windows(argv=None):
         app.initialize(argv)
         app.start()
 
+
 def launch_notebook(argv=None):
     """
     Launch a Jupyter Notebook, with custom Untitled filenames and
@@ -409,7 +399,7 @@ def launch_notebook(argv=None):
             nb = nbf._original_new_notebook()
             cell = nbf.new_code_cell("# Run this cell to complete Chimera initialization\n"
                                      "from pychimera import enable_chimera, enable_chimera_inline, chimera_view\n"
-                                     "enable_chimera()\nenable_chimera_inline()")
+                                     "enable_chimera()\nenable_chimera_inline()\nimport chimera")
             nb['cells'].append(cell)
             return nb
         manager.new_notebook = _prepopulate_nb_patch
