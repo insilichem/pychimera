@@ -1,6 +1,9 @@
 PyChimera
 =========
 
+.. image:: https://zenodo.org/badge/50309940.svg
+   :target: https://zenodo.org/badge/latestdoi/50309940
+
 Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 
 With PyChimera you can…
@@ -16,6 +19,8 @@ With PyChimera you can…
    your conda or virtualenv packages with ``pychimera --gui``.
 
 I hope it’s useful! Feedback is appreciated!
+
+*While we intend to offer multiplatform support, it has been only tested on Linux. Some rough edges could arise in Windows & Mac. Please submit an issue if you find any problems!*
 
 Installation
 ------------
@@ -132,3 +137,23 @@ Largely based on ideas by `Greg Couch at chimera-users`_.
 .. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
 .. _latest UCSF Chimera: http://www.cgl.ucsf.edu/chimera/download.html
 .. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
+
+Citation
+--------
+
+.. image:: https://zenodo.org/badge/50309940.svg
+   :target: https://zenodo.org/badge/latestdoi/50309940
+
+PyChimera is scientific software, funded by public research grants (Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's project ``2014SGR989`` and research grant ``2015FI_B00768``, COST Action ``CM1306``). If you make use of PyChimera in scientific publications, please cite it. It will help measure the impact of our research and future funding!
+
+.. code-block:: latex
+
+    @misc{jaime_rgp_2017_546883,
+      author       = {Jaime Rodríguez-Guerra and
+                      Jean-Didier Maréchal},
+      title        = {insilichem/pychimera: PyChimera},
+      month        = apr,
+      year         = 2017,
+      doi          = {10.5281/zenodo.546883},
+      url          = {https://doi.org/10.5281/zenodo.546883}
+    }
