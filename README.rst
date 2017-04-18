@@ -149,7 +149,7 @@ PyChimera is scientific software, funded by public research grants (Spanish MINE
 .. code-block:: latex
 
     @misc{jaime_rgp_2017_546883,
-      author       = {Jaime Rodríguez-Guerra and
+      author       = {Jaime Rodríguez-Guerra Pedregal and
                       Jean-Didier Maréchal},
       title        = {insilichem/pychimera: PyChimera},
       month        = apr,
