@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pychimera import (main, patch_environ, enable_chimera, load_chimera,
-                       enable_chimera_inline, chimera_view, __version__)
+from core import main, patch_environ, enable_chimera, load_chimera, __version__
+from jupyter import chimera_view, enable_chimera_inline
 
 __author__ = "Jaime Rodríguez-Guerra"
 
