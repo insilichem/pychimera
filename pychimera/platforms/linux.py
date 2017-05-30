@@ -13,23 +13,23 @@ CHIMERA_LOCATIONS = ('/opt',
 
 def _patch_envvars(basedir, libdir, nogui=True):
     os.environ['TERM'] = "xterm-256color"
-    os.environ['PYTHONWARNINGS'] = "ignore"
+    # os.environ['PYTHONWARNINGS'] = "ignore"
 
 
 def _patch_paths(basedir, libdir, nogui=True):
     os.environ['PYTHONPATH'] = ':'.join(
-    [os.path.join(basedir, 'share'),
-     os.path.join(basedir, 'bin')]  +
-    (sys.path if nogui else []) +
-    [libdir,
-     os.path.join(libdir, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
-     os.path.join(libdir, 'python27.zip'),
-     os.path.join(libdir, 'python2.7'),
-     os.path.join(libdir, 'python2.7', 'plat-linux2'),
-     os.path.join(libdir, 'python2.7', 'lib-tk'),
-     os.path.join(libdir, 'python2.7', 'lib-old'),
-     os.path.join(libdir, 'python2.7', 'lib-dynload'),
-     os.path.join(libdir, 'python2.7', 'site-packages')])
+	    [os.path.join(basedir, 'share'),
+	     os.path.join(basedir, 'bin')]  +
+	    (sys.path if nogui else []) +
+	    [libdir,
+	     os.path.join(libdir, 'python2.7', 'site-packages', 'suds_jurko-0.6-py2.7.egg'),
+	     os.path.join(libdir, 'python27.zip'),
+	     os.path.join(libdir, 'python2.7'),
+	     os.path.join(libdir, 'python2.7', 'plat-linux2'),
+	     os.path.join(libdir, 'python2.7', 'lib-tk'),
+	     os.path.join(libdir, 'python2.7', 'lib-old'),
+	     os.path.join(libdir, 'python2.7', 'lib-dynload'),
+	     os.path.join(libdir, 'python2.7', 'site-packages')])
 
 
 def _patch_libraries(basedir, libdir, nogui=True):

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from pychimera import main
+from pychimera.core import main
 if "__main__" == __name__:
     main()

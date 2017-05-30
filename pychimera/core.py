@@ -48,12 +48,12 @@ def enable_chimera(verbose=False, nogui=True):
         return
     try:
         import chimeraInit
-    except ImportError as e:
+    except ImportError as e:    
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
     chimeraInit.init(['', '--script', os.path.devnull], debug=verbose,
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
-    del chimeraInit
+    del chimeraInit 
     os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
@@ -130,7 +130,7 @@ def patch_environ(nogui=True):
 
     # Platform-specific patches
     patch_environ_for_platform(CHIMERA_BASE, CHIMERA_LIB, nogui=nogui)
-    os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
+    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
 def guess_chimera_path(search_all=False):
@@ -147,19 +147,15 @@ def guess_chimera_path(search_all=False):
     -------
     paths: list of str
         Alphabetically sorted list of possible Chimera locations
-    """
-    # First, check if environment variable is already present
-    if 'CHIMERADIR' in os.environ:
-        return os.environ['CHIMERADIR'],
-
+    """    
     try:
-        return search_chimera(CHIMERA_BINARY, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
+        return _search_chimera(CHIMERA_BINARY, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
                               search_all=search_all)
     except IOError:  # 404 - Chimera not found!
         sys.exit("Could not find UCSF Chimera.\n{}".format(_INSTRUCTIONS))
 
 
-def search_chimera(binary, directories, prefix, search_all=False):
+def _search_chimera(binary, directories, prefix, search_all=False):
     """
     Try running ``chimera --root`` in Chimera happens to be in PATH, otherwise
     traverse usual installation locations to find the Chimera root path.
@@ -183,7 +179,16 @@ def search_chimera(binary, directories, prefix, search_all=False):
         by the binary call. Next items are the ones found in `directories`, sorted
         by descendent order.
     """
+    # First, check if environment variable is already present
+    try:
+        return os.environ['CHIMERADIR'],
+    except KeyError:
+        pass
+
     paths = []
+
+    # Try with distutils.find_executable and save that subprocess!
+
     try:
         paths.append(subprocess.check_output([binary, '--root']).decode('utf-8').strip())
     except (OSError, subprocess.CalledProcessError, RuntimeError, ValueError):
