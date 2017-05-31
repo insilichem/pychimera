@@ -219,6 +219,8 @@ def parse_cli_options(argv=None):
                         version='%(prog)s v{}'.format(__version__))
     parser.add_argument('--gui', action='store_false', dest='nogui', default=True,
                         help='Launch Chimera graphical interface')
+    parser.add_argument('--path', action='store_true', dest='path', default=False,
+                        help='Return first found Chimera path')
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument('command', nargs='?',
@@ -265,6 +267,9 @@ def main():
     """
     patch_sys_version()
     args, more_args = parse_cli_options()
+    if args.path:
+        print(guess_chimera_path()[0])
+        return
     patch_environ(nogui=args.nogui)
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
