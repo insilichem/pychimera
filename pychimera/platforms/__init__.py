@@ -8,11 +8,11 @@ _INSTRUCTIONS = ('Please, create an environment variable CHIMERADIR set '
                  'Chimera binary to somewhere in your $PATH.')
 
 if PLATFORM.startswith('win') or PLATFORM == 'cygwin':
-    from win import *
+    from .win import *
 elif PLATFORM.startswith('linux'):
-    from linux import *
+    from .linux import *
 elif PLATFORM.startswith('darwin'):
-    from osx import *
+    from .osx import *
 else:
     exit('ERROR: Platform `{}` not supported.\n{}'.format(PLATFORM, _INSTRUCTIONS))
 

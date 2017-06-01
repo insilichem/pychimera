@@ -50,8 +50,8 @@ def launch_ipython(argv=None):
     try:
         from qtconsole.qtconsoleapp import JupyterQtConsoleApp
     except ImportError:
-        sys.exit("ERROR: IPython QTConsole not installed in this environment. "
-                 "Try with `conda install jupyter qtconsole`")
+        sys.exit("ERROR: IPython QtConsole not installed in this environment. "
+                 "Try with `conda install jupyter ipython qtconsole`")
     else:
         _launch_ipython_linux(ipython_app=JupyterQtConsoleApp)
 

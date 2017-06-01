@@ -8,7 +8,6 @@ This is the binary used to call pychimera.
 """
 
 if "__main__" == __name__:
-    import pychimera
-    pychimera.main()
-    update_dict = {k: v for (k, v) in pychimera.__dict__.iteritems() if k not in globals()}
+    import pychimera.__main__
+    update_dict = pychimera.__main__.run()
     globals().update(update_dict)

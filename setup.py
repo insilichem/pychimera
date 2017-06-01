@@ -5,18 +5,17 @@ from setuptools import setup
 import os
 import sys
 import versioneer
+from textwrap import dedent
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 version = versioneer.get_version()
-if sys.platform.startswith('win'):
-    scripts = {'entry_points': ''' [console_scripts]
-                                   pychimera=pychimera.__main__:run
-                               '''}
+if sys.platform.startswith('win') or sys.platform == 'cygwin':
+    scripts = {'scripts': ['scripts/pychimera'],
+               'entry_points': {'console_scripts': ['pychimera = pychimera.__main__:run']}}
 else:
     scripts = {'scripts': ['scripts/pychimera']}
-
 setup(
     name='pychimera',
     version=version,
