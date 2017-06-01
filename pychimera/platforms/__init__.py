@@ -27,5 +27,6 @@ __all__ = ('_INSTRUCTIONS',
            'CHIMERA_BINARY',
            'CHIMERA_PREFIX',
            'CHIMERA_LOCATIONS',
+           'NULL',
            'patch_environ_for_platform',
            'launch_ipython')

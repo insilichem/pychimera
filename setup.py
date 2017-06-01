@@ -32,5 +32,10 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
-    scripts=['scripts/pychimera']
+    # scripts=['scripts/pychimera',
+    #          'scripts/pychimera.exe'],
+    entry_points='''
+        [console_scripts]
+        pychimera=pychimera.__main__:run
+        '''
 )

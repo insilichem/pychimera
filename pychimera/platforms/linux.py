@@ -9,7 +9,7 @@ CHIMERA_BINARY = 'chimera'
 CHIMERA_PREFIX = 'UCSF-Chimera*'
 CHIMERA_LOCATIONS = ('/opt',
                      os.path.expanduser('~/.local'))
-
+NULL = os.devnull
 
 def _patch_envvars(basedir, libdir, nogui=True):
     os.environ['TERM'] = "xterm-256color"
@@ -68,6 +68,7 @@ def launch_ipython(argv=None, ipython_app=None):
 __all__ = ('CHIMERA_BINARY',
            'CHIMERA_PREFIX',
            'CHIMERA_LOCATIONS',
+           'NULL',
            '_patch_envvars',
            '_patch_paths',
            '_patch_libraries',

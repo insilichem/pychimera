@@ -50,7 +50,9 @@ def enable_chimera(verbose=False, nogui=True):
         import chimeraInit
     except ImportError as e:    
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
-    chimeraInit.init(['', '--script', os.path.devnull], debug=verbose,
+    import Tix
+    del os.environ['TIX_LIBRARY']
+    chimeraInit.init(['', '--script', NULL], debug=verbose,
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
     del chimeraInit 
@@ -63,10 +65,11 @@ load_chimera = enable_chimera
 # Environment, paths, and more patchers
 #---------------------------------------------------------------
 
-# Prevent complains from standard interpreters when launched from Continuum builds
-platform._sys_version_parser = re.compile(
-    r'([\w.+]+)\s*(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*([\w :]+)\)\s*\[([^\]]+)\]?')
-
+# Prevent complaints from standard interpreters when launched from Continuum builds
+platform._sys_version_parser = _sys_version_parser = re.compile(
+    r'([\w.+]+)\s*'
+    '(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*'
+    '([\w :]+)\)\s*\[([^\]]+)\]?')
 
 def patch_sys_version():
     """ Remove Continuum copyright statement to avoid parsing errors in IDLE """
@@ -119,7 +122,7 @@ def patch_environ(nogui=True):
     if 'TIX_LIBRARY' in os.environ:
         os.environ['CHIMERA_TIX_LIBRARY'] = os.environ['TIX_LIBRARY']
         del os.environ['TIX_LIBRARY']
-    
+
     if 'PYTHONNOUSERSITE' in os.environ:
         os.environ['CHIMERA_PYTHONNOUSERSITE'] = os.environ['PYTHONNOUSERSITE']
     os.environ['PYTHONNOUSERSITE'] = '1'
@@ -130,7 +133,7 @@ def patch_environ(nogui=True):
 
     # Platform-specific patches
     patch_environ_for_platform(CHIMERA_BASE, CHIMERA_LIB, nogui=nogui)
-    os.execv(sys.executable, [sys.executable] + sys.argv)
+    os.execve(sys.executable, [sys.executable] + sys.argv, os.environ)
 
 
 def guess_chimera_path(search_all=False):
@@ -157,7 +160,7 @@ def guess_chimera_path(search_all=False):
 
 def _search_chimera(binary, directories, prefix, search_all=False):
     """
-    Try running ``chimera --root`` in Chimera happens to be in PATH, otherwise
+    Try running ``chimera --root`` if Chimera happens to be in PATH, otherwise
     traverse usual installation locations to find the Chimera root path.
 
     Parameters
@@ -185,11 +188,10 @@ def _search_chimera(binary, directories, prefix, search_all=False):
     except KeyError:
         pass
 
+
     paths = []
-
-    # Try with distutils.find_executable and save that subprocess!
-
     try:
+        # Try with distutils.spawn.find_executable and save that subprocess!
         paths.append(subprocess.check_output([binary, '--root']).decode('utf-8').strip())
     except (OSError, subprocess.CalledProcessError, RuntimeError, ValueError):
         search_all = True
@@ -247,7 +249,7 @@ def run_cli_options(args):
             globals().update(runpy.run_path(args.command, run_name="__main__"))
             sys.argv = oldargv
     if _interactive_mode(args.interactive):
-        os.environ['PYTHONINSPECT'] = 'yes'
+        os.environ['PYTHONINSPECT'] = '1'
 
 
 def _interactive_mode(interactive_flag=False):

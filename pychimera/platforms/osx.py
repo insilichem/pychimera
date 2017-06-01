@@ -12,7 +12,7 @@ CHIMERA_PREFIX = 'Chimera*/Contents/Resources'
 CHIMERA_LOCATIONS = ('/Applications', 
                      os.path.expanduser('~/.local'),
                      os.path.expanduser('~/Desktop'))
-
+NULL = os.devnull
 
 def _patch_envvars(basedir, libdir, nogui=True):
     _patch_envvars_linux(basedir, libdir, nogui)
@@ -33,7 +33,7 @@ def _patch_paths(basedir, libdir, nogui=True):
          os.path.join(libdir, 'python2.7', 'lib-old'),
          os.path.join(libdir, 'python2.7', 'lib-dynload'),
          os.path.join(libdir, 'python2.7', 'site-packages')]
-         + sys.path
+         + (sys.path if nogui else [])
          )
 
 
@@ -59,6 +59,7 @@ def _patch_libraries(basedir, libdir, nogui=True):
 __all__ = ('CHIMERA_BINARY',
            'CHIMERA_PREFIX',
            'CHIMERA_LOCATIONS',
+           'NULL',
            '_patch_envvars',
            '_patch_paths',
            '_patch_libraries',
