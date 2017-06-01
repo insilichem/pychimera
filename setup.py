@@ -3,12 +3,20 @@
 
 from setuptools import setup
 import os
+import sys
 import versioneer
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 version = versioneer.get_version()
+if sys.platform.startswith('win'):
+    scripts = {'entry_points': ''' [console_scripts]
+                                   pychimera=pychimera.__main__:run
+                               '''}
+else:
+    scripts = {'scripts': ['scripts/pychimera']}
+
 setup(
     name='pychimera',
     version=version,
@@ -32,10 +40,5 @@ setup(
         'Operating System :: OS Independent',
         'Topic :: Scientific/Engineering :: Chemistry',
     ],
-    # scripts=['scripts/pychimera',
-    #          'scripts/pychimera.exe'],
-    entry_points='''
-        [console_scripts]
-        pychimera=pychimera.__main__:run
-        '''
+    **scripts
 )

@@ -51,11 +51,12 @@ def enable_chimera(verbose=False, nogui=True):
     except ImportError as e:    
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
     import Tix
-    del os.environ['TIX_LIBRARY']
+    if 'TIX_LIBRARY' in os.environ:
+        del os.environ['TIX_LIBRARY']
     chimeraInit.init(['', '--script', NULL], debug=verbose,
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
-    del chimeraInit 
+    del chimeraInit, Tix 
     os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
@@ -66,7 +67,7 @@ load_chimera = enable_chimera
 #---------------------------------------------------------------
 
 # Prevent complaints from standard interpreters when launched from Continuum builds
-platform._sys_version_parser = _sys_version_parser = re.compile(
+platform._sys_version_parser = re.compile(
     r'([\w.+]+)\s*'
     '(?:\|[^|]*\|)?\s*\(#?([^,]+),\s*([\w ]+),\s*'
     '([\w :]+)\)\s*\[([^\]]+)\]?')
