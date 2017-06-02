@@ -5,7 +5,6 @@ from setuptools import setup
 import os
 import sys
 import versioneer
-from textwrap import dedent
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -27,7 +26,7 @@ setup(
     author_email='jaime.rogue@gmail.com',
     description='Use UCSF Chimera Python API in a standard Python 2.7 interpreter.',
     long_description=read('README.rst'),
-    packages=['pychimera'],
+    packages=['pychimera', 'pychimera.platforms'],
     platforms='any',
     classifiers=[
         'Programming Language :: Python :: 2.7',
