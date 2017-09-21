@@ -11,6 +11,7 @@ Use UCSF Chimera Python API in a standard Python 2.7 interpreter.
 
 from __future__ import division, print_function
 from argparse import ArgumentParser
+from distutils.spawn import find_executable
 from glob import glob
 import os
 import platform
@@ -189,12 +190,13 @@ def _search_chimera(binary, directories, prefix, search_all=False):
     except KeyError:
         pass
 
-
     paths = []
-    try:
-        # Try with distutils.spawn.find_executable and save that subprocess!
-        paths.append(subprocess.check_output([binary, '--root']).decode('utf-8').strip())
-    except (OSError, subprocess.CalledProcessError, RuntimeError, ValueError):
+    binary_path = find_executable(binary)
+    if binary_path is not None:
+        real_path = os.path.realpath(binary_path)  # follow symlinks
+        chimera_dir = os.path.sep + os.path.join(*real_path.split(os.path.sep)[1:-2])
+        paths.append(chimera_dir)
+    else:
         search_all = True
     
     if search_all:
@@ -204,6 +206,8 @@ def _search_chimera(binary, directories, prefix, search_all=False):
                 found_paths.sort()
                 found_paths.reverse()
                 paths.extend(found_paths)
+    seen = set()
+    paths = [p for p in paths if p not in seen and not seen.add(p)]
     return paths
 
 
@@ -212,7 +216,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
 #---------------------------------------------------------------
 
 
-def parse_cli_options(argv=None):
+def parrt_cli_options(argv=None):
     parser = ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
     parser.add_argument('-i', action='store_true', dest='interactive', default=False,
                         help='Enable interactive mode')
