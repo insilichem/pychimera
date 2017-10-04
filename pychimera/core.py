@@ -216,7 +216,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
 #---------------------------------------------------------------
 
 
-def parrt_cli_options(argv=None):
+def parse_cli_options(argv=None):
     parser = ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
     parser.add_argument('-i', action='store_true', dest='interactive', default=False,
                         help='Enable interactive mode')
