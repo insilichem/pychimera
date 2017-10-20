@@ -33,7 +33,7 @@ def _patch_paths(basedir, libdir, nogui=True):
          os.path.join(libdir, 'python2.7', 'lib-old'),
          os.path.join(libdir, 'python2.7', 'lib-dynload'),
          os.path.join(libdir, 'python2.7', 'site-packages')]
-         + (sys.path if nogui else [])
+         + sys.path
          )
 
 
