@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Linux
-if [ "$(uname -s)" == "Linux" ]; then
+uname_out="$(uname -s)"
+case "$uname_out" in 
+  Linux* )
     case "${ARCH}" in
       (32)
         _file="chimera-${PKG_VERSION}-linux.bin"
@@ -14,8 +16,9 @@ if [ "$(uname -s)" == "Linux" ]; then
         _installdir="UCSF-Chimera64-${PKG_VERSION}"
       ;;
     esac
+  ;;
 # MacOS X
-elif [ "$(uname -s)" == "Darwin" ]; then
+  Darwin* )
     case "${ARCH}" in
       (32)
         _file="chimera-${PKG_VERSION}-mac.dmg"
@@ -28,7 +31,23 @@ elif [ "$(uname -s)" == "Darwin" ]; then
         _installdir="UCSF-Chimera64-${PKG_VERSION}"
       ;;
     esac
-fi
+  ;;
+# Emulated Windows
+  CYGWIN*|MINGW32*|MSYS*)
+    case "${ARCH}" in
+      (32)
+        _file="chimera-${PKG_VERSION}-win32.exe"
+        _filepath="win32/${_file}"
+        _installdir="UCSF-Chimera-${PKG_VERSION}"
+      ;;
+      (64)
+        _file="chimera-${PKG_VERSION}-win64.exe"
+        _filepath="win64/${_file}"
+        _installdir="UCSF-Chimera64-${PKG_VERSION}"
+      ;;
+    esac
+  ;;
+esac
 
 download(){
   cd "${SRC_DIR}"

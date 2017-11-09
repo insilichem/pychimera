@@ -10,5 +10,6 @@ about:
 requirements:
   build:
     - curl
-    - unxutils  # [win]
+    - git  # [win]
+    - gnuwin32  # [win]
     - python 2.7*
