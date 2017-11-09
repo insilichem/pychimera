@@ -2,8 +2,6 @@
 env:
   matrix:
   - MYCONDAPY=2.7
-  #- MYCONDAPY=3.5
-  #- MYCONDAPY=3.6
 
 ####
 # EVERYTHING BELOW THIS LINE WILL BE COPIED INTO OTHER YMLs
@@ -38,8 +36,8 @@ matrix:
 
 cache:
   directories:
-    - $HOME/download
-    - $HOME/miniconda
+  - $HOME/download
+  - $HOME/miniconda
 
 before_cache:
 - if ! [[ $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
@@ -48,8 +46,8 @@ before_cache:
 
 branches:
   only:
-    - master
-    - /^[0-9]+\.[0-9]+(\.[0-9]+)?([ab][0-9]+)?$/  # release branches
+  - master
+  - /^[0-9]+\.[0-9]+(\.[0-9]+)?([ab][0-9]+)?$/  # release branches
 
 before_install:
 - if ! [[ $TRAVIS_TAG || $TRAVIS_OS_NAME == "linux" && $MYCONDAPY == "2.7" ]]; then exit 0; fi
@@ -92,14 +90,12 @@ install:
 - if [[ ! -e ~/.local/anaconda/bin/chimera ]]; then
     conda build -q conda-recipes/ucsf-chimera-headless;
     conda install -y -c $HOME/miniconda/conda-bld ucsf-chimera-headless;
-    # Headless installations produce a chimera-headless symlink
-    # that might not be catched by pychimera
     ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera;
   fi
 - python setup.py install
 
 
 script:
-  - cd tests
-  - pytest
-  - python pychimeratest.py pychimera_test*
+- cd tests
+- pytest
+- python pychimeratest.py pychimera_test*
