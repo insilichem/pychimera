@@ -86,10 +86,10 @@ install:
 - conda info -a
 
 # Check if UCSF Chimera is present and install it if needed
-- if [[ ! -e ~/.local/anaconda/bin/chimera ]]; then
+- if [[ ! -e $HOME/miniconda/bin/chimera ]]; then
     conda build -q conda-recipes/ucsf-chimera-headless;
     conda install -y -c $HOME/miniconda/conda-bld ucsf-chimera-headless;
-    ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera || true;
+    ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
   fi
 - python setup.py install
 # Show currently installed packages
