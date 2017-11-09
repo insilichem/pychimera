@@ -22,10 +22,9 @@ download(){
   echo 'IMPORTANT: Downloading in 10 seconds...'
 
   sleep 10
-  
-  _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py"
-  _download=`curl -s -F file="${_filepath}" -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/'`
-  curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}"
+
+  set -xe
+  curl "https://www.rbvi.ucsf.edu"$(curl -s -F file="${_filepath}" -F choice=Accept "https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py" | grep href | sed -E 's/.*href="(.*)">/\1/') -o "${_file}"
 }
 
 installation() {
