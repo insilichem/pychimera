@@ -1,16 +1,20 @@
 PyChimera
 =========
 
+.. image:: https://travis-ci.org/insilichem/pychimera.svg?branch=master
+   :target: https://travis-ci.org/insilichem/pychimera
+
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
+
 
 Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 
 With PyChimera you can…
 
 -  Run scripts depending on chimera **from CLI** with ``pychimera``.
--  Enable ``import chimera`` in interactive coding sessions (console, ipython) 
-   **outside Chimera**. 
+-  Enable ``import chimera`` in interactive coding sessions (console, ipython)
+   **outside Chimera**.
 -  Use Jupyter Notebooks with Chimera. You only need to run the prepopulated cell.
 -  Launch a standard Chimera instance, with the benefit of importing all
    your conda or virtualenv packages with ``pychimera --gui``.
@@ -24,7 +28,7 @@ if you find any problems!*
 Installation
 ------------
 
-First, if you haven’t already, install `latest UCSF Chimera`_. We recommend 
+First, if you haven’t already, install `latest UCSF Chimera`_. We recommend
 using it inside a Python 2.7 `conda <https://conda.io/miniconda.html>`_ environment.
 
 Then, install PyChimera via ``pip`` or ``setup.py``:
@@ -116,7 +120,7 @@ call ``%run path/to/file.py`` inside the interpreter.
 Notes
 -----
 
-Obviously, you need to install `latest UCSF Chimera`_ in your computer. PyChimera 
+Obviously, you need to install `latest UCSF Chimera`_ in your computer. PyChimera
 will do its best to find the installation path automagically in the standard
 locations. If somehow it doesn’t succeed, you can always set an environment variable
 called ``CHIMERADIR`` in your ``.bashrc``, or similar.
@@ -169,7 +173,7 @@ Citation
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
 
-PyChimera is scientific software, funded by public research grants 
+PyChimera is scientific software, funded by public research grants
 (Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's
 project ``2014SGR989`` and research grant ``2015FI_B00768``, COST Action ``CM1306``).
 If you make use of PyChimera in scientific publications, please cite it. It will help
