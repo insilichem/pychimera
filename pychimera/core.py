@@ -49,7 +49,7 @@ def enable_chimera(verbose=False, nogui=True):
         return
     try:
         import chimeraInit
-    except ImportError as e:    
+    except ImportError as e:
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
     import Tix, Tkinter as tk
     if 'TIX_LIBRARY' in os.environ:
@@ -58,7 +58,7 @@ def enable_chimera(verbose=False, nogui=True):
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
     Tix._default_root = tk._default_root
-    del chimeraInit, Tix 
+    del chimeraInit, Tix
     os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
@@ -105,23 +105,23 @@ def patch_environ(nogui=True):
             CHIMERA_BASE = next(p for p in paths if 'headless' in p)
         except StopIteration:
             pass
-    
+
     os.environ['CHIMERA'] = CHIMERA_BASE
     CHIMERA_LIB = os.path.join(CHIMERA_BASE, 'lib')
-    
+
     # Set Tcl/Tk for gui mode
     if 'TCL_LIBRARY' in os.environ:
         os.environ['CHIMERA_TCL_LIBRARY'] = os.environ['TCL_LIBRARY']
     os.environ['TCL_LIBRARY'] = os.path.join(CHIMERA_LIB, 'tcl8.6')
-    
+
     if 'TCLLIBPATH' in os.environ:
         os.environ['CHIMERA_TCLLIBPATH'] = os.environ['TCLLIBPATH']
     os.environ['TCLLIBPATH'] = '{' + CHIMERA_LIB + '}'
-    
+
     if 'TK_LIBRARY' in os.environ:
         os.environ['CHIMERA_TK_LIBRARY'] = os.environ['TK_LIBRARY']
         del os.environ['TK_LIBRARY']
-    
+
     if 'TIX_LIBRARY' in os.environ:
         os.environ['CHIMERA_TIX_LIBRARY'] = os.environ['TIX_LIBRARY']
         del os.environ['TIX_LIBRARY']
@@ -153,11 +153,15 @@ def guess_chimera_path(search_all=False):
     -------
     paths: list of str
         Alphabetically sorted list of possible Chimera locations
-    """    
-    try:
-        return _search_chimera(CHIMERA_BINARY, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
-                              search_all=search_all)
-    except IOError:  # 404 - Chimera not found!
+    """
+    paths = _search_chimera(CHIMERA_BINARY, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
+                            search_all=search_all)
+    if not paths and search_all:  # try headless?
+        headless = '{0[0]}{1}{0[1]}'.format(os.path.split(CHIMERA_BINARY), '-headless')
+        paths = _search_chimera(headless, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
+                                search_all=search_all)
+
+    if not paths:
         sys.exit("Could not find UCSF Chimera.\n{}".format(_INSTRUCTIONS))
 
 
@@ -175,7 +179,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
     prefix : str
         Root directory prefix name in this platform
     search_all : bool, optional, default=False
-        Collect all posible locations of Chimera installations, even if a 
+        Collect all posible locations of Chimera installations, even if a
         binary has been found.
 
     Returns
@@ -199,7 +203,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
         paths.append(chimera_dir)
     else:
         search_all = True
-    
+
     if search_all:
         for basedir in directories:
             found_paths = filter(os.path.isdir, glob(os.path.join(basedir, prefix)))
@@ -223,7 +227,7 @@ def parse_cli_options(argv=None):
                         help='Enable interactive mode')
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
                         help='Print debug information')
-    parser.add_argument('-V', '--version', action='version', 
+    parser.add_argument('-V', '--version', action='version',
                         version='%(prog)s v{}'.format(__version__))
     parser.add_argument('--gui', action='store_false', dest='nogui', default=True,
                         help='Launch Chimera graphical interface')
