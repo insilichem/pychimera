@@ -92,6 +92,8 @@ install:
     ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera;
   fi
 - python setup.py install
+# Show currently installed packages
+- conda list
 
 
 script:
