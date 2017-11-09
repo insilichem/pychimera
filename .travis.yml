@@ -89,7 +89,7 @@ install:
 - if [[ ! -e ~/.local/anaconda/bin/chimera ]]; then
     conda build -q conda-recipes/ucsf-chimera-headless;
     conda install -y -c $HOME/miniconda/conda-bld ucsf-chimera-headless;
-    ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera;
+    ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera || true;
   fi
 - python setup.py install
 # Show currently installed packages
