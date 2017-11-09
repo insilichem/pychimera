@@ -25,6 +25,9 @@ install:
   - conda create -q -n test-environment -c insilichem python=$TRAVIS_PYTHON_VERSION pytest
   - source activate test-environment
   - conda install -y -c $(conda info --root)/conda-bld ucsf-chimera-headless
+  # Headless installations produce a chimera-headless symlink
+  # that might not be catched by pychimera
+  - ln -s $CONDA_PREFIX/bin/chimera-headless $CONDA_PREFIX/bin/chimera
   - python setup.py install
 
 script:
