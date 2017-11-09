@@ -160,10 +160,9 @@ def guess_chimera_path(search_all=False):
         headless = '{0[0]}{1}{0[1]}'.format(os.path.split(CHIMERA_BINARY), '-headless')
         paths = _search_chimera(headless, CHIMERA_LOCATIONS, CHIMERA_PREFIX,
                                 search_all=search_all)
-
     if not paths:
         sys.exit("Could not find UCSF Chimera.\n{}".format(_INSTRUCTIONS))
-
+    return paths
 
 def _search_chimera(binary, directories, prefix, search_all=False):
     """
