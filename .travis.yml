@@ -95,7 +95,6 @@ install:
 # Show currently installed packages
 - conda list
 
-
 script:
 - cd tests
 - pytest
@@ -106,9 +105,15 @@ after_success:
 - conda install anaconda-client
 
 deploy:
- # Deploy to Anaconda.org
+  # Deploy to Anaconda.org
   - provider: script
     script: anaconda -t $ANACONDA_TOKEN upload conda-bld/**/pychimera-*.tar.bz2
     on:
       tags: true
-    skip_cleanup: true
+  # Deploy to PyPI
+  - provider: pypi
+    username: jaimergp
+    password:
+      secure: JnDtXHS5IqL73rdk1tW8rrPZ5X3ZmwoR4CgvexLIEDyan2ykyyEFQ6+utS8nSwjrIAbQSUDD4iwux5B0n2HO5FVl8hjXTQa3SvyZ0w6vhRVD/7PQqqcBq7r3VkvJe3EHB4B7dUCI2VfqKB7ciCVE4E0pcMEvpK145eaLn+Z+0OqefOx/xO9cb8UaJW0ZbQrywyZl7+hfN9YND9HjXqg4yoZVYYudT1yT/O5ekXggYOVqU1dtzM2i6LLzfKJ2DLJOCdlH5yhpALaECxBAkQKucuW28GJhH7ScMKBMrMs8HHjItCK061KMCBY30uxHiny28T2ov0pB1ng/py+14eJfQ+1KIRAAorkZqQNlvGPgoJ3qx7wIs2AOKv9nR+dvDwzQYteAshL5xkBi1iqrUuYQWqdnrHni30Yn0k1h+5Hqmq1n3yy2tBl6DqBvvnEzqXrZ2+H1I/em9SBGBqQOY9nLAFMkFx8zKnqSQxCExX/IrXSWR1mjucStJjhV67hyIYhAknoRSaulHhmAxRP7WIiMVCJa9nJy8w75rtsQkatywZhwwbB7h+TmXOGhQ9OaJKG4UVNIHxoLA8WbUTr/DSfGesRZ1wNzri91gKjFBeO2CFdKN4XvgJBGnqiSer0bMvhPrlZdbpQkcO972O2rjbs7AcbCn1Zu2PNdDmFzUh2wY+Y=
+    on:
+      tags: true
