@@ -164,6 +164,7 @@ def guess_chimera_path(search_all=False):
         sys.exit("Could not find UCSF Chimera.\n{}".format(_INSTRUCTIONS))
     return paths
 
+
 def _search_chimera(binary, directories, prefix, search_all=False):
     """
     Try running ``chimera --root`` if Chimera happens to be in PATH, otherwise
