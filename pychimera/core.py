@@ -58,7 +58,7 @@ def enable_chimera(verbose=False, nogui=True):
                      silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
     Tix._default_root = tk._default_root
-    del chimeraInit, Tix
+    del chimeraInit, Tix, tk
     os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
