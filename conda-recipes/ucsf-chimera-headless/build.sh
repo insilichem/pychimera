@@ -14,6 +14,9 @@ if [ "$(uname -s)" == "Linux" ]; then
         _installdir="UCSF-Chimera64-${PKG_VERSION}-headless"
       ;;
     esac
+else
+    echo "Headless UCSF Chimera is only available for Linux"
+    exit 1
 fi
 
 download(){

@@ -11,8 +11,8 @@ install:
   # as well as pip, conda-build
   - powershell .\\scripts\\install_miniconda.ps1
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - conda build conda-recipes/ucsf-chimera-headless
-  - conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera-headless
+  - conda build conda-recipes/ucsf-chimera
+  - conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera
   - conda install -y -q pytest
   - python setup.py install
 
