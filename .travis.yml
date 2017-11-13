@@ -109,7 +109,7 @@ script:
 - cd ..
 
 before_deploy:
-- conda build conda-recipes/pychimera
+- conda build conda-recipes/pychimera --no-test
 - conda install anaconda-client
 
 deploy:
