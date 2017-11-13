@@ -107,7 +107,7 @@ script:
 - pytest
 - python pychimeratest.py pychimera_test*
 
-after_success:
+before_deploy:
 - conda build conda-recipes/pychimera
 - conda install anaconda-client
 
