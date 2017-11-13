@@ -87,14 +87,16 @@ install:
 
 # Check if UCSF Chimera is present and install it if needed
 - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-    CHIMERA_PACKAGE='ucsf-chimera-headless';
+    CHIMERA_PACKAGE="ucsf-chimera-headless";
   else
-    CHIMERA_PACKAGE='ucsf-chimera';
-  fi
+    CHIMERA_PACKAGE="ucsf-chimera";
+  fi;
   if [[ ! -e $HOME/miniconda/bin/chimera ]]; then
     conda build -q conda-recipes/$CHIMERA_PACKAGE;
     conda install -y -c $HOME/miniconda/conda-bld $CHIMERA_PACKAGE;
-    ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
+    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
+    fi
   fi
 - python setup.py install
 # Show currently installed packages
