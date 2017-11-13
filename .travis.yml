@@ -115,7 +115,7 @@ before_deploy:
 deploy:
   # Deploy to Anaconda.org
   - provider: script
-    script: anaconda -u insilichem -t $ANACONDA_TOKEN upload $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2
+    script: anaconda -t $ANACONDA_TOKEN upload -u insilichem $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2
     on:
       tags: true
   # Deploy to PyPI
