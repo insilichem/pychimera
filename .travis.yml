@@ -106,6 +106,7 @@ script:
 - cd tests
 - pytest
 - python pychimeratest.py pychimera_test*
+- cd ..
 
 before_deploy:
 - conda build conda-recipes/pychimera
