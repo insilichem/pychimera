@@ -47,7 +47,7 @@ before_cache:
 branches:
   only:
   - master
-  - /^[0-9]+\.[0-9]+(\.[0-9]+)?([ab][0-9]+)?$/  # release branches
+  - /^v?[0-9]+\.[0-9]+(\.[0-9]+)?([ab][0-9]+)?$/  # release branches
 
 before_install:
 # Get miniconda. Take the right version, so re-installing python is hopefully not needed.
