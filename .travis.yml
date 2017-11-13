@@ -100,3 +100,15 @@ script:
 - cd tests
 - pytest
 - python pychimeratest.py pychimera_test*
+
+after_success:
+- conda build conda-recipes/pychimera
+- conda install anaconda-client
+
+deploy:
+ # Deploy to Anaconda.org
+  - provider: script
+    script: anaconda -t $ANACONDA_TOKEN upload conda-bld/**/pychimera-*.tar.bz2
+    on:
+      tags: true
+    skip_cleanup: true
