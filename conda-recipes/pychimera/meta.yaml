@@ -18,6 +18,21 @@ requirements:
 
   run:
     - python 2.7*
+    - nomkl
+    - cairo 1.12.18  # [linux]
+    - freetype 2.5.5  # [unix]
+    - glib 2.50.2  # [linux]
+    - icu 54.1  # [unix]
+    - libgcc 5.2.0  # [linux]
+    - libiconv 1.14  # [unix]
+    - libpng 1.6.30  # [unix]
+    - ncurses 6.0  # [unix]
+    - pcre 8.39  # [unix]
+    - pixman 0.32.6  # [linux]
+    - readline 6.2  # [unix]
+    - setuptools 27.2.0  # [unix]
+    - sqlite 3.13.0  # [unix]
+    - tk 8.5.18  # [unix]
 
 test:
   imports:
