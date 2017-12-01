@@ -5,6 +5,7 @@ environment:
       PYTHON_ARCH: "64"
       CONDA_PY: "27"
       CONDA_NPY: "111"
+      CHIMERA_VERSION: "1.12"
 
 install:
   # this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
@@ -15,6 +16,7 @@ install:
   - conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera
   - conda install -y -q pytest
   - python setup.py install
+  - set CHIMERADIR="%PYTHON%\\Library\\Chimera %CHIMERA_VERSION%"
 
 
 test_script:
