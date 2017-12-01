@@ -4,6 +4,9 @@ PyChimera
 .. image:: https://travis-ci.org/insilichem/pychimera.svg?branch=master
    :target: https://travis-ci.org/insilichem/pychimera
 
+.. image:: https://ci.appveyor.com/api/projects/status/fwp3uum6be7tcfqn/branch/master?svg=true
+   :target: https://ci.appveyor.com/project/jaimergp/pychimera
+
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
 

@@ -116,6 +116,7 @@ If you don't want (or can't) use ``conda``, you can also install PyChimera with 
 or directly from source:
 
 ::
+
     # With git
     git clone https://github.com/insilichem/pychimera.git && python pychimera/setup.py install
 

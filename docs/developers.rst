@@ -13,7 +13,9 @@ interpreter. This is achieved in two steps:
 2. ``enable_chimera()`` initializes Chimera. This is done through their
    own routines (``chimeraInit``).
 
-As a result, if you want to use PyChimera in your developments, you only need to execute these lines at the beginning of the script. For example, PyChimera is used programmatically in the `GaudiMM`_ CLI entry point.
+As a result, if you want to use PyChimera in your developments, you only need
+to execute these lines at the beginning of the script. For example, PyChimera
+is used programmatically in the `GaudiMM`_ CLI entry point.
 
 
 ::
@@ -23,9 +25,14 @@ As a result, if you want to use PyChimera in your developments, you only need to
     pychimera.enable_chimera()
 
 
-Calling ``patch_environ()`` will result in the interpreter being restarted to inject all UCSF Chimera libraries; take that into account in the logic of your program. This is why you should probably add the lines at the very beginning of the script.
+Calling ``patch_environ()`` will result in the interpreter being restarted
+to inject all UCSF Chimera libraries; take that into account in the logic
+of your program. This is why you should probably add the lines at the very
+beginning of the script.
 
-Additionally, you can have your users execute the script with ``pychimera`` instead of ``python``. Up to you, but usually you will prefer to hide the technical details...
+Additionally, you can have your users execute the script with ``pychimera``
+instead of ``python``. Up to you, but usually you will prefer to hide the
+technical details...
 
 
 Alternative methods

@@ -20,8 +20,8 @@ Take into account that this action will prevent MMTK extensions from working aga
 If you use those often enough, you can have a separate, unmodified UCSF Chimera installation.
 
 
-If you are using the development versions of ``pychimera``, Chimera's ``setuptools`` will complain
-about the versioning scheme (ie, ``pychimera==0.1.11+6.gc2e1fbb.dirty``). As before,
+If you are using the development versions of ``pychimera``, Chimera's ``setuptools`` will
+complain about the versioning scheme (ie, ``pychimera==0.1.11+6.gc2e1fbb.dirty``). As before,
 the fix is to upgrade the package. You might have to remove it manually beforehand, though:
 
 ::
