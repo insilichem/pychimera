@@ -28,7 +28,7 @@ interpreter or not. It just works. Additionally, it offers some more features:
 
 - Interactive sessions in the Python interpreter where you can just run ``import chimera``, like it should be.
 
-- Full compatibility with IPython and Jupyter Notebooks.
+- Full compatibility with IPython and Jupyter Notebooks (read :ref:`ExtraPackages`).
 
 - Simple API to run your Chimera-dependent script with any ``python`` interpreter.
 

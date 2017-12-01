@@ -22,7 +22,7 @@ To execute a script:
 
     pychimera script.py
 
-To launch Chimera GUI with custom packages:
+To launch Chimera GUI with custom packages (check `InsiliChem Plume`_ as an example!):
 
 ::
 
@@ -40,3 +40,5 @@ To execute any Python statement:
 
     pychimera -c 'import chimera'
 
+
+.. _InsiliChem Plume: https://github.com/insilichem/plume

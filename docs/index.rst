@@ -4,24 +4,30 @@ PyChimera
 
 .. image:: https://travis-ci.org/insilichem/pychimera.svg?branch=master
    :target: https://travis-ci.org/insilichem/pychimera
+   :alt: Travis CI status
 
 .. image:: https://ci.appveyor.com/api/projects/status/fwp3uum6be7tcfqn/branch/master?svg=true
    :target: https://ci.appveyor.com/project/jaimergp/pychimera
+   :alt: AppVeyor status
+
+.. image:: https://readthedocs.org/projects/pychimera/badge/?version=latest
+   :target: http://pychimera.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
+   :alt: Zenodo DOI
 
 
-Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
+Use `UCSF Chimera`_ packages in any Python 2.7 interpreter.
 
 With PyChimera you can…
 
--  Run scripts depending on chimera **from CLI** with ``pychimera``.
--  Enable ``import chimera`` in interactive coding sessions (console, ipython)
-   **outside Chimera**.
--  Use Jupyter Notebooks with Chimera. You only need to run the prepopulated cell.
--  Launch a standard Chimera instance, with the benefit of importing all
-   your conda or virtualenv packages with ``pychimera --gui``.
+-  Run scripts depending on chimera **from CLI** with ``pychimera script.py``.
+-  Enable ``import chimera`` in interactive coding sessions **outside Chimera**,
+   including IPython and Jupyter Notebooks.
+-  Launch a standard UCSF Chimera instance, with the benefit of importing all
+   your ``conda`` or ``virtualenv`` packages with ``pychimera --gui``.
 
 
 Citation
@@ -29,7 +35,7 @@ Citation
 
 PyChimera is scientific software, funded by public research grants
 (Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's
-project ``2014SGR989`` and research grant ``2015FI_B00768``, COST Action ``CM1306``).
+project ``2014SGR989`` and research grant ``2017FI_B2_00168``, COST Action ``CM1306``).
 If you make use of PyChimera in scientific publications, please cite it. It will help
 measure the impact of our research and future funding!
 

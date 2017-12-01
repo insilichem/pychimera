@@ -128,11 +128,32 @@ or directly from source:
 While this *should* work in an ideal environment, it would probably have some rough edges
 due to the libraries installed in your system being different than the ones provided by
 UCSF Chimera. The ``pychimera`` conda package has been finetuned to work with the correct
-versions (as specified in the `conda recipe <../conda-recipes/pychimera/meta.yaml>`_.
+versions so, if possible use that. Otherwise, refer to the `conda recipe`_ to identify
+the correct versions.
 
+
+.. _ExtraPackages:
+
+Extra packages
+--------------
+
+So far, you have a barebones ``pychimera`` installation. If you want to make use of all
+the Jupyter compatibility features, you will need to install some extra packages. Namely:
+
+::
+
+    # First, activate your environment if necessary
+    # source activate pychimera
+    conda install ipython jupyter notebook
+    # In Windows, you will also need:
+    conda install qtconsole
+    # For interactive visualization in the notebook:
+    conda install -c bioconda nglview
+    # might need: jupyter-nbextension enable nglview --py --sys-prefix
 
 .. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
 .. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
 .. _UCSF Chimera download: https://www.cgl.ucsf.edu/chimera/download.html
 .. _conda: https://conda.io/miniconda.html
 .. _Miniconda: https://conda.io/miniconda.html
+.. _conda recipe: https://github.com/insilichem/pychimera/blob/master/conda-recipes/pychimera/meta.yaml

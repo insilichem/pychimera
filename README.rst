@@ -3,12 +3,19 @@ PyChimera
 
 .. image:: https://travis-ci.org/insilichem/pychimera.svg?branch=master
    :target: https://travis-ci.org/insilichem/pychimera
+   :alt: Travis CI status
 
 .. image:: https://ci.appveyor.com/api/projects/status/fwp3uum6be7tcfqn/branch/master?svg=true
    :target: https://ci.appveyor.com/project/jaimergp/pychimera
+   :alt: AppVeyor status
+
+.. image:: https://readthedocs.org/projects/pychimera/badge/?version=latest
+   :target: http://pychimera.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
+   :alt: Zenodo DOI
 
 
 Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
@@ -43,7 +50,7 @@ Citation
 
 PyChimera is scientific software, funded by public research grants
 (Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's
-project ``2014SGR989`` and research grant ``2015FI_B00768``, COST Action ``CM1306``).
+project ``2014SGR989`` and research grant ``2017FI_B2_00168``, COST Action ``CM1306``).
 If you make use of PyChimera in scientific publications, please cite it. It will help
 measure the impact of our research and future funding!
 
