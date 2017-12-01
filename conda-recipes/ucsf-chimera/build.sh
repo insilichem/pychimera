@@ -2,7 +2,7 @@
 
 # Linux
 uname_out="$(uname -s)"
-case "$uname_out" in 
+case "$uname_out" in
   Linux* )
     case "${ARCH}" in
       (32)
@@ -33,7 +33,7 @@ case "$uname_out" in
     esac
   ;;
 # Emulated Windows
-  CYGWIN*|MINGW*|MSYS*)
+  CYGWIN*|MINGW*|MSYS*|*windows*)
     case "${ARCH}" in
       (32)
         _file="chimera-${PKG_VERSION}-win32.exe"
@@ -47,7 +47,11 @@ case "$uname_out" in
       ;;
     esac
   ;;
+  *)
+    echo "Platform ${uname_out} not supported".
+    exit 1
 esac
+
 
 download(){
   cd "${SRC_DIR}"
@@ -99,7 +103,7 @@ softlink_win() {
 download
 # Linux
 uname_out="$(uname -s)"
-case "$uname_out" in 
+case "$uname_out" in
   Linux* )
     installation_linux
     softlink
