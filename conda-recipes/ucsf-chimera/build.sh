@@ -33,7 +33,7 @@ case "$uname_out" in
     esac
   ;;
 # Emulated Windows
-  CYGWIN*|MINGW32*|MSYS*)
+  CYGWIN*|MINGW*|MSYS*)
     case "${ARCH}" in
       (32)
         _file="chimera-${PKG_VERSION}-win32.exe"
@@ -83,15 +83,35 @@ installation_mac() {
   && hdiutil detach "${_mountdir}"
 }
 
-softlink() {
+installation_win() {
   cd "${SRC_DIR}"
+  cmd.exe /C "START /WAIT ${_file} /SILENT /NOICONS /SUPPRESSMSGBOXES /DIR=""${PREFIX}\\Library\\${_installdir}"""
+}
+
+softlink() {
   ln -s "${PREFIX}/lib/${_installdir}/bin/chimera" "${PREFIX}/bin/chimera"
 }
 
+softlink_win() {
+  ln -s "${PREFIX}\\Library\\${_installdir}\\bin\\chimera.exe" "${PREFIX}\\Scripts\\chimera.exe"
+}
+
 download
-if [ "$(uname -s)" == "Linux" ]; then
+# Linux
+uname_out="$(uname -s)"
+case "$uname_out" in 
+  Linux* )
     installation_linux
-elif [ "$(uname -s)" == "Darwin" ]; then
+    softlink
+  ;;
+# MacOS X
+  Darwin* )
     installation_mac
-fi
-softlink
+    softlink
+  ;;
+# Emulated Windows
+  CYGWIN*|MINGW*|MSYS*)
+    installation_win
+    softlink_win
+  ;;
+esac

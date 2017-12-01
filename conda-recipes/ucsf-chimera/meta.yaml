@@ -1,6 +1,6 @@
 package:
   name: ucsf-chimera
-  version: "1.11"
+  version: "1.12"
 
 about:
   home: https://www.cgl.ucsf.edu/chimera/
