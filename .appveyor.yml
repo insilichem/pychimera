@@ -19,7 +19,10 @@ install:
   - conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera
   - conda install -y -q pytest
   - python setup.py install
-  - set CHIMERADIR="%PYTHON%\\Library\\Chimera %CHIMERA_VERSION%"
+  - "SET CHIMERADIR=%PYTHON%\\Library\\Chimera %CHIMERA_VERSION%"
+  - ECHO %CHIMERADIR%
+  - pychimera --path
+  - set PYTHONDONTWRITEBYTECODE="1"
 
 build: off
 
