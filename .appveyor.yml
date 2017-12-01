@@ -7,6 +7,9 @@ environment:
       CONDA_NPY: "111"
       CHIMERA_VERSION: "1.12"
 
+matrix:
+  fast_finish: true
+
 install:
   # this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
   # as well as pip, conda-build
@@ -18,6 +21,7 @@ install:
   - python setup.py install
   - set CHIMERADIR="%PYTHON%\\Library\\Chimera %CHIMERA_VERSION%"
 
+build: off
 
 test_script:
   - cd tests
