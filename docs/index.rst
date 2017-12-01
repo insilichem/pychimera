@@ -1,3 +1,4 @@
+
 PyChimera
 =========
 
@@ -19,24 +20,9 @@ With PyChimera you can…
 -  Launch a standard Chimera instance, with the benefit of importing all
    your conda or virtualenv packages with ``pychimera --gui``.
 
-I hope it’s useful! Feedback is appreciated!
-
-
-Acknowledgments
----------------
-
-Largely based on ideas by `Greg Couch at chimera-users`_.
-
-.. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
-.. _latest UCSF Chimera: http://www.cgl.ucsf.edu/chimera/download.html
-.. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
-
 
 Citation
 --------
-
-.. image:: https://zenodo.org/badge/50309940.svg
-   :target: https://zenodo.org/badge/latestdoi/50309940
 
 PyChimera is scientific software, funded by public research grants
 (Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's
@@ -55,3 +41,29 @@ measure the impact of our research and future funding!
       doi          = {10.5281/zenodo.546883},
       url          = {https://doi.org/10.5281/zenodo.546883}
     }
+
+.. toctree::
+   :maxdepth: 2
+   :caption: User Guide
+
+   quickstart.rst
+   install.rst
+   usage.rst
+   faq.rst
+   developers.rst
+
+
+Indices and tables
+------------------
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+Acknowledgments
+---------------
+
+Largely based on ideas by `Greg Couch at chimera-users`_.
+
+.. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
+.. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
