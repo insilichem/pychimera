@@ -20,8 +20,6 @@ install:
   - conda install -y -q pytest
   - python setup.py install
   - "SET CHIMERADIR=%PYTHON%\\Library\\Chimera %CHIMERA_VERSION%"
-  - ECHO %CHIMERADIR%
-  - pychimera --path
   - set PYTHONDONTWRITEBYTECODE="1"
 
 build: off
