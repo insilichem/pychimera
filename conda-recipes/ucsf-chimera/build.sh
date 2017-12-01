@@ -38,12 +38,12 @@ case "$uname_out" in
       (32)
         _file="chimera-${PKG_VERSION}-win32.exe"
         _filepath="win32/${_file}"
-        _installdir="Chimera ${PKG_VERSION}"
+        _installdir="Chimera_${PKG_VERSION}"
       ;;
       (64)
         _file="chimera-${PKG_VERSION}-win64.exe"
         _filepath="win64/${_file}"
-        _installdir="Chimera ${PKG_VERSION}"
+        _installdir="Chimera_${PKG_VERSION}"
       ;;
     esac
   ;;

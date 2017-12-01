@@ -6,7 +6,7 @@ environment:
       CONDA_PY: "27"
       CONDA_NPY: "111"
       CHIMERA_VERSION: "1.12"
-      CHIMERADIR: "C:\\Python27_64\\Library\\Chimera 1.12"
+      CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.12"
       PYTHONDONTWRITEBYTECODE: "1"
 
 matrix:
@@ -20,8 +20,8 @@ install:
   # as well as pip, conda-build
   - ps: if (!(Test-Path $env:PYTHON\\Scripts\\conda.exe -PathType Leaf)){ .\\scripts\\install_miniconda.ps1 }
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "IF NOT EXIST ""%CHIMERADIR%"" conda build conda-recipes/ucsf-chimera"
-  - "IF NOT EXIST ""%CHIMERADIR%"" conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera"
+  - "IF NOT EXIST %CHIMERADIR% conda build conda-recipes/ucsf-chimera"
+  - "IF NOT EXIST %CHIMERADIR% conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera"
   - conda install -y -q pytest
   - conda build purge
   - python setup.py install
