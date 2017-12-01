@@ -90,7 +90,7 @@ installation_mac() {
 
 installation_win() {
   cd "${SRC_DIR}"
-  cmd.exe /C "START /WAIT ${_file} /SILENT /NOICONS /SUPPRESSMSGBOXES /DIR=""${PREFIX}\\Library\\${_installdir}"""
+  cmd.exe /C "START /WAIT ${_file} /VERYSILENT /DIR=""${PREFIX}\\Library\\${_installdir}"""
 }
 
 softlink() {
