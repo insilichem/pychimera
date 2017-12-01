@@ -11,7 +11,7 @@ def test_script():
     assert out == 'Hello world!\n'
 
 def test_c_flag():
-    out = check_output(['pychimera', '-c', "print('Hello world!')"],
+    out = check_output(['pychimera', '-c', 'print(\'Hello world!\')'],
                        universal_newlines=True)
     assert out == 'Hello world!\n'
 
