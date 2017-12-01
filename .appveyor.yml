@@ -8,6 +8,7 @@ environment:
       CHIMERA_VERSION: "1.12"
       CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.12"
       PYTHONDONTWRITEBYTECODE: "1"
+      APPVEYOR_SAVE_CACHE_ON_ERROR: "true"
 
 matrix:
   fast_finish: true
