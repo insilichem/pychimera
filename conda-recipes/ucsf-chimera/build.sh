@@ -103,7 +103,6 @@ softlink_win() {
 
 download
 # Linux
-uname_out="$(uname -s)"
 case "$uname_out" in
   Linux* )
     installation_linux
@@ -115,8 +114,12 @@ case "$uname_out" in
     softlink
   ;;
 # Emulated Windows
-  CYGWIN*|MINGW*|MSYS*)
+  CYGWIN*|MINGW*|MSYS*|*windows*)
     installation_win
     softlink_win
+  ;;
+  *)
+    echo "Platform ${uname_out} not supported"
+    exit 1
   ;;
 esac
