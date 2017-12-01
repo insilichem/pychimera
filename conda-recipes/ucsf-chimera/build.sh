@@ -48,8 +48,9 @@ case "$uname_out" in
     esac
   ;;
   *)
-    echo "Platform ${uname_out} not supported".
+    echo "Platform ${uname_out} not supported"
     exit 1
+  ;;
 esac
 
 
