@@ -1,4 +1,8 @@
 environment:
+  PYTHONDONTWRITEBYTECODE: "1"
+  APPVEYOR_SAVE_CACHE_ON_ERROR: "true"
+  BINSTAR_TOKEN:
+    secure: zW96v77uhbDdArc0805i/CDIvVpZvqCJyJ+WgSE1b65nPLO0nGUwmZ9qshUICIba
   matrix:
     - PYTHON: "C:\\Python27_64"
       PYTHON_VERSION: "2.7"
@@ -7,8 +11,7 @@ environment:
       CONDA_NPY: "111"
       CHIMERA_VERSION: "1.12"
       CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.12"
-      PYTHONDONTWRITEBYTECODE: "1"
-      APPVEYOR_SAVE_CACHE_ON_ERROR: "true"
+
 
 matrix:
   fast_finish: true
@@ -25,6 +28,7 @@ install:
   - "IF NOT EXIST %CHIMERADIR% conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera"
   - conda install -y -q pytest
   - conda build purge
+  - rm -rf %PYTHON%/conda-bld/*
   - python setup.py install
 
 build: off
@@ -33,3 +37,9 @@ test_script:
   - cd tests
   - pytest
   - python pychimeratest.py pychimera_test*
+  - cd ..
+
+deploy_script:
+  - conda build conda-recipes/pychimera --no-test
+  - ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { $env:conda_upload = 'true' } Else { write-output "Not on a tag on master, won't deploy to anaconda" }
+  - cmd: IF "%conda_upload%"=="true" anaconda -t %BINSTAR_TOKEN% upload %PYTHON%/conda-bld/win-*/pychimera-*.tar.bz2 -u insilichem --no-progress --force

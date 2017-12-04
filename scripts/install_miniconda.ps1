@@ -91,6 +91,7 @@ function main () {
     InstallMiniconda $env:PYTHON_VERSION $env:PYTHON_ARCH $env:PYTHON
     UpdateConda $env:PYTHON
     InstallCondaPackages $env:PYTHON "conda-build"
+    InstallCondaPackages $env:PYTHON "anaconda-client"
 }
 
 main
