@@ -109,8 +109,8 @@ install:
         _download=`curl -s -F file="${_filepath}" -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/'`;
         curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}";
         hdiutil convert "${_file}" -format UDRW -o chimerarw;
-        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg
-        export CHIMERADIR="$HOME/chimera"
+        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
+        export CHIMERADIR="$HOME/chimera";
     fi;
   fi
 - python setup.py install
