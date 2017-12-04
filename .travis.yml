@@ -38,6 +38,7 @@ cache:
   directories:
   - $HOME/download
   - $HOME/miniconda
+  - $HOME/chimera
 
 before_cache:
 - if ! [[ $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
@@ -87,16 +88,30 @@ install:
 
 # Check if UCSF Chimera is present and install it if needed
 - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-    CHIMERA_PACKAGE="ucsf-chimera-headless";
-  else
-    CHIMERA_PACKAGE="ucsf-chimera";
-  fi;
-  if [[ ! -e $HOME/miniconda/bin/chimera ]]; then
-    conda build -q conda-recipes/$CHIMERA_PACKAGE;
-    conda install -y -c $HOME/miniconda/conda-bld $CHIMERA_PACKAGE;
-    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    if [[ ! -e $HOME/miniconda/bin/chimera ]]; then
+      CHIMERA_PACKAGE="ucsf-chimera-headless";
+      conda build -q conda-recipes/$CHIMERA_PACKAGE;
+      conda install -y -c $HOME/miniconda/conda-bld $CHIMERA_PACKAGE;
       ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
-    fi
+    fi;
+  else
+    if [[ ! -e $HOME/chimera/bin/chimera ]]; then
+        set +x;
+        echo "IMPORTANT: By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
+        echo "IMPORTANT: The license agreement can be found here: http://www.cgl.ucsf.edu/chimera/license.html";
+        echo "IMPORTANT: If you do not agree, please press Ctrl-C now.";
+        echo "IMPORTANT: Downloading in 10 seconds...'";
+        sleep 10;
+        set -x;
+        _file="chimera-1.12-mac64.dmg";
+        _filepath="mac64/${_file}";
+        _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
+        _download=`curl -s -F file="${_filepath}" -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/'`;
+        curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}";
+        hdiutil convert "${_file}" -format UDRW -o chimerarw;
+        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg
+        export CHIMERADIR="$HOME/chimera"
+    fi;
   fi
 - python setup.py install
 # Show currently installed packages
