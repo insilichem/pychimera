@@ -97,10 +97,10 @@ install:
   else
     if [[ ! -e $HOME/chimera/bin/chimera ]]; then
         set +x;
-        echo "IMPORTANT: By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
-        echo "IMPORTANT: The license agreement can be found here: http://www.cgl.ucsf.edu/chimera/license.html";
-        echo "IMPORTANT: If you do not agree, please press Ctrl-C now.";
-        echo "IMPORTANT: Downloading in 10 seconds...'";
+        echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
+        echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
+        echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
+        echo "IMPORTANT - Downloading in 10 seconds...'";
         sleep 10;
         set -x;
         _file="chimera-1.12-mac64.dmg";
