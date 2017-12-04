@@ -111,7 +111,7 @@ install:
         hdiutil convert "${_file}" -format UDRW -o chimerarw;
         hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
     fi;
-    export CHIMERADIR="$HOME/chimera/Chimera.app";
+    export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
   fi
 - python setup.py install
 # Show currently installed packages
