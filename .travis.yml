@@ -95,7 +95,7 @@ install:
       ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
     fi;
   else
-    if [[ ! -e $HOME/chimera/bin/chimera ]]; then
+    if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
         set +x;
         echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
         echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
@@ -110,10 +110,13 @@ install:
         curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}";
         hdiutil convert "${_file}" -format UDRW -o chimerarw;
         hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
+        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/setuptools*
+        pip install -U setuptools -t $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
   fi
 - python setup.py install
+-
 # Show currently installed packages
 - conda list
 
