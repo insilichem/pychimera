@@ -31,6 +31,10 @@ With PyChimera you can…
 
 I hope it’s useful! Feedback is appreciated!
 
+Documentation
+-------------
+
+The updated documentation is always available at `readthedocs`_.
 
 Acknowledgments
 ---------------
@@ -40,7 +44,7 @@ Largely based on ideas by `Greg Couch at chimera-users`_.
 .. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
 .. _latest UCSF Chimera: http://www.cgl.ucsf.edu/chimera/download.html
 .. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
-
+.. _readthedocs: http://pychimera.readthedocs.io
 
 Citation
 --------

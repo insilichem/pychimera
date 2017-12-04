@@ -11,7 +11,7 @@ Recommended steps
 1. Install Miniconda
 ....................
 
-Anaconda is a Python distribution that bundles all the scientific packages
+`Anaconda`_ is a Python distribution that bundles all the scientific packages
 you will ever need. It also provides a fancy package manager to update and
 install more if you need it. A stripped-down version of Anaconda that only
 includes the package manager (``conda``) and the essential Python packages,
@@ -33,15 +33,14 @@ When you are done, close the terminal and reopen it to apply the changes.
 
 **Windows**
 
-Double-click on the .exe and follow the steps. Make sure to add Miniconda
+Double-click on the ``.exe`` and follow the steps. Make sure to add Miniconda
 to your %PATH% when you are asked about it.
 
 2. Install UCSF Chimera
 .......................
 
-First, if you haven’t already, install UCSF Chimera. If you already
-have it installed, skip to step 2, but make sure you satisfy the requirements
-detailed in step 4.
+If you haven’t already, install UCSF Chimera. If you already have it installed,
+skip to step 3, but make sure you satisfy the requirements detailed in step 4.
 
 PyChimera has been tested on UCSF Chimera 1.10 and above on Linux, Mac OS X and Windows.
 See :ref:`multiplatform` for more details. Go to the `UCSF Chimera download`_
@@ -65,7 +64,7 @@ in your $PATH. Choose the one that refers to the Miniconda installation.
 
 **Windows**
 
-Just double click on the .exe and follow the steps of the installation wizard.
+Just double click on the ``.exe`` and follow the steps of the installation wizard.
 
 3. Install PyChimera
 ....................
@@ -97,7 +96,7 @@ In Linux and Mac OS X, this can be done in your ``.bashrc`` or equivalent.
 
 ::
 
-    export CHIMERADIR="~/.local/UCSF-Chimera"
+    export CHIMERADIR="~/.local/UCSF-Chimera"  # point to the actual location in your system
 
 In Windows, you have to search "Environment variables" in the Start menu and create a new
 user environment variable in the popup dialog. Remember, the variable name is ``CHIMERADIR``
@@ -140,16 +139,25 @@ Extra packages
 So far, you have a barebones ``pychimera`` installation. If you want to make use of all
 the Jupyter compatibility features, you will need to install some extra packages. Namely:
 
+- IPython support: ``ipython`` (in Windows, ``qtconsole`` is also required).
+- Notebook support: ``jupyter``, ``notebook``.
+- Interactive molecule depiction: ``nglview``.
+
+This is easily installed with conda:
+
 ::
 
-    # First, activate your environment if necessary
+    ## First, activate your environment if necessary
     # source activate pychimera
+    ## In Windows, it would be:
+    # activate pychimera
     conda install ipython jupyter notebook
-    # In Windows, you will also need:
+    ## In Windows, you will also need:
     conda install qtconsole
-    # For interactive visualization in the notebook:
+    ## For interactive visualization in the notebook:
     conda install -c bioconda nglview
-    # might need: jupyter-nbextension enable nglview --py --sys-prefix
+    ## might need:
+    # jupyter-nbextension enable nglview --py --sys-prefix
 
 .. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
 .. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
@@ -157,3 +165,4 @@ the Jupyter compatibility features, you will need to install some extra packages
 .. _conda: https://conda.io/miniconda.html
 .. _Miniconda: https://conda.io/miniconda.html
 .. _conda recipe: https://github.com/insilichem/pychimera/blob/master/conda-recipes/pychimera/meta.yaml
+.. _Anaconda: https://www.anaconda.com/

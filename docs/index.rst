@@ -12,7 +12,7 @@ PyChimera
 
 .. image:: https://readthedocs.org/projects/pychimera/badge/?version=latest
    :target: http://pychimera.readthedocs.io/en/latest/?badge=latest
-   :alt: Documentation Status
+   :alt: Documentation status
 
 .. image:: https://zenodo.org/badge/50309940.svg
    :target: https://zenodo.org/badge/latestdoi/50309940
@@ -24,7 +24,7 @@ Use `UCSF Chimera`_ packages in any Python 2.7 interpreter.
 With PyChimera you can…
 
 -  Run scripts depending on chimera **from CLI** with ``pychimera script.py``.
--  Enable ``import chimera`` in interactive coding sessions **outside Chimera**,
+-  Enable ``import chimera`` in interactive coding sessions **outside UCSF Chimera**,
    including IPython and Jupyter Notebooks.
 -  Launch a standard UCSF Chimera instance, with the benefit of importing all
    your ``conda`` or ``virtualenv`` packages with ``pychimera --gui``.

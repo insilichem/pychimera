@@ -13,20 +13,21 @@ a very versatile text interface with `custom commands
 <https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/framecommand.html>`_).
 
 However, all this code is only available if you use the bundled Python 2.7 interpreter
-to run your code, like this:
+to run your scripts, like this:
 
 ::
 
-    chimera --nogui --script "path/to/my/script.py arg1 arg2 argN"
+    chimera --nogui --script "path/to/my/script.py arg1 arg2 ..."
 
 
 Or, using the GUI command line toolbar, by running ``runscript path/to/my/script.py
-arg1 arg2 argN``. This is less desirable than simply running ``python script.py``.
+arg1 arg2 ...``. This is less desirable than simply running ``python script.py arg1 arg2 ...``.
 
 With PyChimera, you can run ``pychimera script.py`` and forget about using the UCSF Chimera
 interpreter or not. It just works. Additionally, it offers some more features:
 
-- Interactive sessions in the Python interpreter where you can just run ``import chimera``, like it should be.
+- Interactive sessions in the Python interpreter where you can just run ``import chimera``,
+  like it should be.
 
 - Full compatibility with IPython and Jupyter Notebooks (read :ref:`ExtraPackages`).
 
