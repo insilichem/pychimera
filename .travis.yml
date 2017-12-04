@@ -110,8 +110,8 @@ install:
         curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}";
         hdiutil convert "${_file}" -format UDRW -o chimerarw;
         hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
-        export CHIMERADIR="$HOME/chimera";
     fi;
+    export CHIMERADIR="$HOME/chimera/Chimera.app";
   fi
 - python setup.py install
 # Show currently installed packages
