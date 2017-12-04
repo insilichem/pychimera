@@ -22,12 +22,11 @@ Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 
 With PyChimera you can…
 
--  Run scripts depending on chimera **from CLI** with ``pychimera``.
--  Enable ``import chimera`` in interactive coding sessions (console, ipython)
-   **outside Chimera**.
--  Use Jupyter Notebooks with Chimera. You only need to run the prepopulated cell.
--  Launch a standard Chimera instance, with the benefit of importing all
-   your conda or virtualenv packages with ``pychimera --gui``.
+-  Run scripts depending on chimera **from CLI** with ``pychimera script.py``.
+-  Enable ``import chimera`` in interactive coding sessions **outside UCSF Chimera**,
+   including IPython and Jupyter Notebooks.
+-  Launch a standard UCSF Chimera instance, with the benefit of importing all
+   your ``conda`` or ``virtualenv`` packages with ``pychimera --gui``.
 
 I hope it’s useful! Feedback is appreciated!
 

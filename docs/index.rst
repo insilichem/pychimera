@@ -29,6 +29,12 @@ With PyChimera you can…
 -  Launch a standard UCSF Chimera instance, with the benefit of importing all
    your ``conda`` or ``virtualenv`` packages with ``pychimera --gui``.
 
+Projects using PyChimera
+------------------------
+
+- `GaudiMM <https://github.com/insilichem/gaudi>`_
+- `InsiliChem Plume <https://github.com/insilichem/plume>`_
+- `structfit.py <https://gist.github.com/jrjhealey/a145a297f7ed4d7ea45a147347fc74b0>`_
 
 Citation
 --------
