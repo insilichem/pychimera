@@ -16,7 +16,8 @@ PyChimera
    :alt: Documentation status
 
 
-Use `UCSF Chimera`_ packages in any Python 2.7 interpreter.
+Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
+----------------------------------------------------------
 
 With PyChimera you can…
 
