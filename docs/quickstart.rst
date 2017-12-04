@@ -38,6 +38,64 @@ interpreter or not. It just works. Additionally, it offers some more features:
 If you want more details, be sure to check the paper (already submitted, once published, it
 will be linked here).
 
+Usage
+-----
+
+Run ``pychimera -h`` for quick help. Basically:
+
+Running code
+............
+
+To execute a script:
+
+::
+
+    pychimera script.py
+
+
+To launch a module that uses UCSF Chimera internally:
+
+::
+
+    pychimera -m this
+
+
+To execute any Python statement:
+
+::
+
+    pychimera -c 'import chimera'
+
+To know which UCSF Chimera instance is being loaded:
+
+::
+
+    pychimera --path
+
+
+Interactive sessions
+....................
+
+To start an **interactive** Python session with importable UCSF Chimera modules:
+
+::
+
+    pychimera                  # start the standard Python interpreter
+    pychimera -i some_file.py  # run a script and stay in the standard Python interpreter
+    pychimera -im module       # same, but with a Python module
+    pychimera -ic "string"     # same, but with a command
+    pychimera ipython          # launch IPython interpreter
+    pychimera notebook         # launch IPython notebook
+
+
+To launch the UCSF Chimera GUI with custom packages (check `InsiliChem Plume`_ as an example!):
+
+::
+
+    pychimera --gui
+
+.. _InsiliChem Plume: https://github.com/insilichem/plume
+
 
 .. _multiplatform:
 
@@ -81,16 +139,18 @@ the current state of implementation:
 
 \* Only with ``qtconsole`` installed.
 
-PyChimera has been successfully installed and tested in the followign 64-bit systems:
+PyChimera has been successfully installed and tested in the following 64-bit systems:
 
 - Linux
     + Arch Linux with UCSF Chimera 1.10, 1.11, 1.12
-    + Ubuntu 14.04 with UCSF Chimera 1.10, 1.11, 1.12
-    + CentOS 5 with UCSF Chimera 1.11
+    + Ubuntu 14.04 with UCSF Chimera 1.10, 1.11, 1.12 (Travis CI's)
+    + CentOS 6.3 with UCSF Chimera 1.11.2
 - Mac OS X
     + 10.11 El Capitan with UCSF Chimera 1.12
+    + 10.10 (Xcode 6.4) with UCSF Chimera 1.12 (Travis CI's)
 - Windows
     + 7 SP1 with UCSF Chimera 1.12
+    + Windows Server 2012 R2 with UCSF Chimera 1.12 (AppVeyor's)
 
 
 .. _Travis CI: https://travis-ci.org/insilichem/pychimera

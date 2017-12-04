@@ -57,7 +57,6 @@ measure the impact of our research and future funding!
 
    quickstart.rst
    install.rst
-   usage.rst
    faq.rst
    developers.rst
 
