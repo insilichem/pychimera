@@ -82,10 +82,8 @@ installation_linux() {
 
 installation_mac() {
   cd "${SRC_DIR}"
-
-  _mountdir=$(echo `hdiutil mount "${_file}" | tail -1 | awk '{$1=$2=""; print $0}'` | xargs -0 echo) \
-  && installer -pkg "${_mountdir}/"*.pkg -target "${PREFIX}/lib/${_installdir}" \
-  && hdiutil detach "${_mountdir}"
+  hdiutil convert "${_file}" -format UDRW -o chimerarw
+  _mountdir=$(echo `hdiutil attach -mountpoint "${PREFIX}/lib/${_installdir}" chimerarw.dmg | tail -1 | awk '{$1=$2=""; print $0}'` | xargs -0 echo)
 }
 
 installation_win() {
