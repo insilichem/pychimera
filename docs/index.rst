@@ -15,6 +15,10 @@ PyChimera
    :target: http://pychimera.readthedocs.io/en/latest/?badge=latest
    :alt: Documentation status
 
+.. image:: https://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbty021-blue.svg
+   :target: http://dx.doi.org/10.1093/bioinformatics/bty021
+   :alt: Citation DOI
+
 
 Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 ----------------------------------------------------------
@@ -44,7 +48,6 @@ Projects using PyChimera
    faq.rst
    developers.rst
 
-
 Indices and tables
 ------------------
 
@@ -59,3 +62,30 @@ Largely based on ideas by `Greg Couch at chimera-users`_.
 
 .. _UCSF Chimera: https://www.cgl.ucsf.edu/chimera/
 .. _Greg Couch at chimera-users: http://www.cgl.ucsf.edu/pipermail/chimera-users/2015-January/010647.html
+
+Citation
+--------
+
+.. image:: https://img.shields.io/badge/doi-10.1093%2Fbioinformatics%2Fbty021-blue.svg
+   :target: http://dx.doi.org/10.1093/bioinformatics/bty021
+
+PyChimera is scientific software, funded by public research grants
+(Spanish MINECO's project ``CTQ2014-54071-P``, Generalitat de Catalunya's
+project ``2014SGR989`` and research grant ``2017FI_B2_00168``, COST Action ``CM1306``).
+If you make use of PyChimera in scientific publications, please cite it. It will help
+measure the impact of our research and secure future funding!
+
+.. code-block:: latex
+
+    @article{pychimera2018,
+      author = {Rodríguez-Guerra Pedregal, Jaime and Maréchal, Jean-Didier},
+      title = {PyChimera: Use UCSF Chimera modules in any Python 2.7 project},
+      journal = {Bioinformatics},
+      volume = {},
+      number = {},
+      pages = {bty021},
+      year = {2018},
+      doi = {10.1093/bioinformatics/bty021},
+      URL = { + http://dx.doi.org/10.1093/bioinformatics/bty021},
+      eprint = {/oup/backfile/content_public/journal/bioinformatics/pap/10.1093_bioinformatics_bty021/1/bty021.pdf}
+    }
