@@ -281,7 +281,7 @@ def run_cli_options(args):
             else:
                 globals().update(runpy.run_path(choice, run_name="__main__"))
         elif flag == '-m':
-            if sys.argv[1] == '--':  # -m syntax needs '--' for extra args
+            if '--' in sys.argv[1:2] :  # -m syntax needs '--' for extra args
                 sys.argv.pop(1)
             globals().update(runpy.run_module(choice, run_name="__main__"))
         elif flag == '-c':
