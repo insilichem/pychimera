@@ -10,9 +10,10 @@ Use UCSF Chimera Python API in a standard Python 2.7 interpreter.
 """
 
 from __future__ import division, print_function
-from argparse import ArgumentParser
 from distutils.spawn import find_executable
+from operator import itemgetter
 from glob import glob
+import argparse
 import os
 import platform
 import re
@@ -21,7 +22,7 @@ import subprocess
 import sys
 
 from .platforms import *
-from .jupyter_utils import check_ipython, in_ipython
+from .jupyter_utils import launch_ipython, launch_notebook, in_ipython
 
 from ._version import get_versions
 __version__ = get_versions()['version']
@@ -222,7 +223,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
 
 
 def parse_cli_options(argv=None):
-    parser = ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
+    parser = argparse.ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
     parser.add_argument('-i', action='store_true', dest='interactive', default=False,
                         help='Enable interactive mode')
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
@@ -234,11 +235,16 @@ def parse_cli_options(argv=None):
     parser.add_argument('--path', action='store_true', dest='path', default=False,
                         help='Return first found Chimera path')
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument('command', nargs='?',
-                       help="A keyword {ipython, notebook} or a Python script")
-    group.add_argument('-m', dest='module', help='Run Python module as a script')
-    group.add_argument('-c', dest='string', help='Program passed in as string')
+    parser.add_argument('-m', dest='module', nargs='?',
+                        help='Instead of a script, run a Python. Extra args must be '
+                             'preceded by --; ie, "python -m this -- -k 1 --yes"')
+    parser.add_argument('-c', dest='string', nargs='?',
+                        help='Instead of a script, run program passed in as a string')
+    parser.add_argument('command', nargs='?',
+                        help="A keyword {ipython, notebook} or a Python script")
+    parser.add_argument('extra_args', metavar="[args]", nargs=argparse.REMAINDER,
+                        help="Additional command-line arguments to be passed to the script.")
+
 
     return parser.parse_known_args(argv)
 
@@ -248,18 +254,41 @@ def run_cli_options(args):
     Quick implementation of Python interpreter's -m, -c and file execution.
     The resulting dictionary is imported into global namespace, just in case
     someone is using interactive mode.
+
+    We try to keep argument order as to pass them correctly to the subcommands.
     """
-    if not in_ipython():
-        if args.module:
-            globals().update(runpy.run_module(args.module, run_name="__main__"))
-        if args.string:
-            exec(args.string)
-        if args.command not in ('ipython', 'notebook', None):
-            oldargv, sys.argv = sys.argv, sys.argv[1:]
-            globals().update(runpy.run_path(args.command, run_name="__main__"))
-            sys.argv = oldargv
     if _interactive_mode(args.interactive):
         os.environ['PYTHONINSPECT'] = '1'
+    if in_ipython():
+        return
+    exclusive_choices = [[None, args.command], ['-c', args.string], ['-m', args.module]]
+    for flag_choice in exclusive_choices:
+        try:
+            a = sys.argv.index(flag_choice[0] or flag_choice[1])
+        except ValueError:
+            a = 1000
+        flag_choice.append(a)
+    exclusive_choices.sort(key=lambda v: v[2])
+    for i, (flag, choice, _) in enumerate(exclusive_choices):
+        if not choice:
+            continue
+        sys.argv = [choice] + sys.argv[sys.argv.index(choice)+1:]
+        if not flag:
+            if choice == 'ipython':
+                launch_ipython(argv=sys.argv[1:])
+            elif choice == 'notebook':
+                launch_notebook()
+            else:
+                globals().update(runpy.run_path(choice, run_name="__main__"))
+        elif flag == '-m':
+            if sys.argv[1] == '--':  # -m syntax needs '--' for extra args
+                sys.argv.pop(1)
+            globals().update(runpy.run_module(choice, run_name="__main__"))
+        elif flag == '-c':
+            exec choice in globals(), locals()  # workaround
+        else:
+            continue
+        break
 
 
 def _interactive_mode(interactive_flag=False):
@@ -286,7 +315,6 @@ def main():
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:
-        check_ipython(args.command, more_args)
         run_cli_options(args)
 
 

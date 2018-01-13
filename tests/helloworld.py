@@ -3,4 +3,5 @@
 
 from __future__ import print_function
 import chimera
-print("Hello world!")
+import sys
+print("Hello world!", ','.join(sys.argv[1:]))
