@@ -55,19 +55,26 @@ def enable_chimera(verbose=False, nogui=True):
     import Tix, Tkinter as tk
     if 'TIX_LIBRARY' in os.environ:
         del os.environ['TIX_LIBRARY']
+    Tix._default_root = tk._default_root
     if not nogui:
         import chimera
         chimera.title += ' (PyChimera)'
         chimera.version.version = '{} (PyChimera v{})'.format(chimera.version.version, __version__)
+        chimera.registerPostGraphicsFunc(_tix_default_root_fix)
 
     chimeraInit.init(['', '--script', NULL] + (sys.argv[1:] if not nogui else []),
                      debug=verbose, silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
-    Tix._default_root = tk._default_root
     del chimeraInit, Tix, tk
     os.environ['CHIMERA_ENABLED'] = '1'
 
 load_chimera = enable_chimera
+
+
+def _tix_default_root_fix():
+    import Tix
+    import Tkinter as tk
+    Tix._default_root = tk._default_root
 
 
 #---------------------------------------------------------------
