@@ -55,8 +55,9 @@ def enable_chimera(verbose=False, nogui=True):
     import Tix, Tkinter as tk
     if 'TIX_LIBRARY' in os.environ:
         del os.environ['TIX_LIBRARY']
-    chimeraInit.init(['', '--script', NULL], debug=verbose,
-                     silent=not verbose, nostatus=not verbose,
+
+    chimeraInit.init(['', '--script', NULL] + (sys.argv[1:] if not nogui else []),
+                     debug=verbose, silent=not verbose, nostatus=not verbose,
                      nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
     Tix._default_root = tk._default_root
     del chimeraInit, Tix, tk
@@ -312,6 +313,8 @@ def main():
         print(guess_chimera_path()[0])
         return
     patch_environ(nogui=args.nogui)
+    if not args.nogui:
+        sys.argv.remove('--gui')
     if args.command != 'notebook':
         enable_chimera(verbose=args.verbose, nogui=args.nogui)
     if args.nogui:
