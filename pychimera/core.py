@@ -55,6 +55,10 @@ def enable_chimera(verbose=False, nogui=True):
     import Tix, Tkinter as tk
     if 'TIX_LIBRARY' in os.environ:
         del os.environ['TIX_LIBRARY']
+    if not nogui:
+        import chimera
+        chimera.title += ' (PyChimera)'
+        chimera.version.version = '{} (PyChimera v{})'.format(chimera.version.version, __version__)
 
     chimeraInit.init(['', '--script', NULL] + (sys.argv[1:] if not nogui else []),
                      debug=verbose, silent=not verbose, nostatus=not verbose,
