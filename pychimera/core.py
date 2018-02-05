@@ -235,7 +235,8 @@ def _search_chimera(binary, directories, prefix, search_all=False):
 
 
 def parse_cli_options(argv=None):
-    parser = argparse.ArgumentParser(description='pychimera - UCSF Chimera for standard Python')
+    parser = argparse.ArgumentParser(description='pychimera - UCSF Chimera for standard Python',
+                                     add_help=False)
     parser.add_argument('-i', action='store_true', dest='interactive', default=False,
                         help='Enable interactive mode')
     parser.add_argument('-v', '--verbose', action='store_true', dest='verbose', default=False,
@@ -257,7 +258,9 @@ def parse_cli_options(argv=None):
     parser.add_argument('extra_args', metavar="[args]", nargs=argparse.REMAINDER,
                         help="Additional command-line arguments to be passed to the script.")
 
-
+    if len(sys.argv) == 2 and sys.argv[1] in ('-h', '--help'):
+        parser.print_help()
+        sys.exit()
     return parser.parse_known_args(argv)
 
 
