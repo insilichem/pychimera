@@ -79,7 +79,7 @@ def enable_chimera_inline():
     Enable IPython magic commands to run some Chimera actions
 
     Currently supported:
-    - %chimera_export_3D [<model>]: 
+    - %chimera_export_3D [<model>]:
         Depicts the Chimera 3D canvas in a WebGL iframe. Requires
         a headless Chimera build and a Notebook instance. SLOW.
     - %chimera_run <command>:
@@ -150,7 +150,7 @@ def chimera_view(*molecules):
             self.params = {}
             self.id = str(id(molecules[0]))
             self.molecules = molecules
-    
+
         def get_structure_string(self):
             s = StringIO()
             chimera.pdbWrite(self.molecules, self.molecules[0].openState.xform, s)
@@ -158,6 +158,6 @@ def chimera_view(*molecules):
 
     if not molecules:
         molecules = chimera.openModels.list(modelTypes=[chimera.Molecule])
-    
+
     structure = _ChimeraStructure(*molecules)
     return nv.NGLWidget(structure)
