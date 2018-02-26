@@ -31,8 +31,6 @@ matrix:
   #    https://github.com/travis-ci/travis-ci/issues/2778
   #    ...
   fast_finish: true
-  allow_failures:
-  - os: osx
 
 cache:
   directories:
@@ -41,14 +39,14 @@ cache:
   - $HOME/chimera
 
 before_cache:
-- if ! [[ $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
+- if [[ ! $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
 - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
 - pip uninstall -y pychimera
 
 branches:
   only:
   - master
-  - /^v?[0-9]+\.[0-9]+(\.[0-9]+)?([ab][0-9]+)?$/  # release branches
+  - /^v?[0-9]+\.[0-9]+(\.[0-9]+)?([abc][0-9]*)?$/  # release branches
 
 before_install:
 # Get miniconda. Take the right version, so re-installing python is hopefully not needed.
@@ -115,29 +113,26 @@ install:
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
   fi
-- python setup.py install
 # Show currently installed packages
 - conda list
+- python setup.py install
 
 script:
 - cd tests
 - pytest
 - python pychimeratest.py pychimera_test*
 - cd ..
-
-before_deploy:
-- conda build conda-recipes/pychimera --no-test
-- conda install anaconda-client
+- if [[ $TRAVIS_TAG ]]; then
+    conda build conda-recipes/pychimera --no-test;
+    conda install -q anaconda-client;
+    anaconda -t $ANACONDA_TOKEN upload -u insilichem $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2;
+  fi;
 
 deploy:
-  # Deploy to Anaconda.org
-  - provider: script
-    script: anaconda -t $ANACONDA_TOKEN upload -u insilichem $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2
-    on:
-      tags: true
   # Deploy to PyPI
   - provider: pypi
     username: jaimergp
+    skip_cleanup: true
     password:
       secure: al4NX0/MIP0IDu7IcMKlKi6ySWTSNNxiM2DcOJROnqcyAOtC5+r+j+VmB03YZxLXw8+czUxDWorORRXmOsHTw29+BRWLBKJAjLUQw2QYMlf/0tCkrvpKvMG+OY9w1dxOVBOb3atme9IjQn6QDlMdu30sw8vaHudNEOMD6uspCRFngW4mjFAgTwgm2Bxs9Kmyeo83oVArdPDXU7ww1T7Jc6mKxX2e2YGjCGoVLrgsIZIJZOyxFRynwvZsYmjyLxKsQ82WbAaKptNdes4K0ihfQAwTDECGnFDzjU8TxonwaXpKW/2rkJPxkb62MdpDnWD5NtatrJ1oqx0tUILBLriUpQaRA2qR9pApBmsehQesC/z4jaNPmQqs8/he6SCPuEMneiICsCouwJOEcRD2MCdhRdFyfzVWdmcZI9Lf8jyMq/cHWwfKWGuIM/PVClMwupDrvJxcGkoXN/T+mWTaXPRNTPBcldq7GDBhKxm6vWUHPJOyS/w4/9lQs91sENVd6CBPzM8EcX4nV0JkjYKoGxuO2tEwa3LUihbgnpr2QdckYjxRUp8VLUW825886vrZSfRRTjfJp6d9EBLa4FC6YOezwxeotaquVmkMLjDPnboAEbQjbUicSSOaqKUDvjD+jxdnxc9KAKEDUEiXIIzx8wPO2JmoESeqg6hlYWntjqk2/tM=
     on:
