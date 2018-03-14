@@ -36,7 +36,7 @@ Projects using PyChimera
 
 - `GaudiMM <https://github.com/insilichem/gaudi>`_
 - `InsiliChem Plume <https://github.com/insilichem/plume>`_
-- `structfit.py <https://gist.github.com/jrjhealey/a145a297f7ed4d7ea45a147347fc74b0>`_
+- `bioinfo-tools <https://github.com/jrjhealey/bioinfo-tools>`_
 
 
 .. toctree::
