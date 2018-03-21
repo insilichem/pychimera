@@ -31,6 +31,9 @@ With PyChimera you can…
 -  Launch a standard UCSF Chimera instance, with the benefit of importing all
    your ``conda`` or ``virtualenv`` packages with ``pychimera --gui``.
 
+.. image:: img/pychimera.gif
+
+
 Projects using PyChimera
 ------------------------
 
