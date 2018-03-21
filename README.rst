@@ -18,7 +18,7 @@ PyChimera
    :alt: Citation DOI
 
 
-**Use `UCSF Chimera`_ packages in any Python 2.7 interpreter**
+**Use UCSF Chimera packages in any Python 2.7 interpreter**
 
 .. image:: docs/img/pychimera.gif
 
