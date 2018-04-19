@@ -25,6 +25,7 @@ requirements:
     - nomkl
     - cairo 1.12.18  # [linux]
     - freetype 2.5.5  # [unix]
+    - fontconfig 2.12 # [linux]
     - glib 2.50.2  # [linux]
     - icu 54.1  # [unix]
     - libgcc 5.2.0  # [linux]
