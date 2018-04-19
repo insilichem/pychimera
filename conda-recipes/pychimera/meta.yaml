@@ -12,7 +12,6 @@ source:
   version: {{ environ.get('GIT_DESCRIBE_TAG', 'v')[1:]  }}
 
 build:
-  number: 1
   skip_compile_pyc:
     - "*.py"
 
