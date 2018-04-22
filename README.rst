@@ -17,6 +17,7 @@ PyChimera
    :target: http://dx.doi.org/10.1093/bioinformatics/bty021
    :alt: Citation DOI
 
+.. image:: docs/img/pychimera.png
 
 **Use UCSF Chimera packages in any Python 2.7 interpreter**
 

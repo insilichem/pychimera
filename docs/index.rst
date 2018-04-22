@@ -23,6 +23,9 @@ PyChimera
 Use `UCSF Chimera`_ packages in any Python 2.7 interpreter
 ----------------------------------------------------------
 
+.. image:: img/pychimera.png
+
+
 With PyChimera you can…
 
 -  Run scripts depending on chimera **from CLI** with ``pychimera script.py``.
@@ -38,7 +41,7 @@ Projects using PyChimera
 ------------------------
 
 - `GaudiMM <https://github.com/insilichem/gaudi>`_
-- `InsiliChem Plume <https://github.com/insilichem/plume>`_
+- `InsiliChem Tangram <https://github.com/insilichem/tangram>`_
 - `bioinfo-tools <https://github.com/jrjhealey/bioinfo-tools>`_
 
 
