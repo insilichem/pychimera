@@ -42,7 +42,7 @@ Projects using PyChimera
 
 - `GaudiMM <https://github.com/insilichem/gaudi>`_
 - `InsiliChem Tangram <https://github.com/insilichem/tangram>`_
-- `bioinfo-tools <https://github.com/jrjhealey/bioinfo-tools>`_
+- `@jrjhealey <https://github.com/jrjhealey>`_'s `chimera scripts <https://github.com/jrjhealey/chimera>`_ & `bioinfo-tools <https://github.com/jrjhealey/bioinfo-tools>`_
 
 
 .. toctree::
