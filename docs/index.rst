@@ -83,15 +83,15 @@ measure the impact of our research and secure future funding!
 
 .. code-block:: latex
 
-    @article{pychimera2018,
-      author = {Rodríguez-Guerra Pedregal, Jaime and Maréchal, Jean-Didier},
-      title = {PyChimera: Use UCSF Chimera modules in any Python 2.7 project},
-      journal = {Bioinformatics},
-      volume = {},
-      number = {},
-      pages = {bty021},
-      year = {2018},
-      doi = {10.1093/bioinformatics/bty021},
-      URL = { + http://dx.doi.org/10.1093/bioinformatics/bty021},
-      eprint = {/oup/backfile/content_public/journal/bioinformatics/pap/10.1093_bioinformatics_bty021/1/bty021.pdf}
-    }
+   @article{pychimera2018,
+     author = {Rodríguez-Guerra Pedregal, Jaime and Maréchal, Jean-Didier},
+     title = {PyChimera: use UCSF Chimera modules in any Python 2.7 project},
+     journal = {Bioinformatics},
+     volume = {34},
+     number = {10},
+     pages = {1784-1785},
+     year = {2018},
+     doi = {10.1093/bioinformatics/bty021},
+     URL = {http://dx.doi.org/10.1093/bioinformatics/bty021},
+     eprint = {/oup/backfile/content_public/journal/bioinformatics/34/10/10.1093_bioinformatics_bty021/1/bty021.pdf}
+   }
