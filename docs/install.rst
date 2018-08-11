@@ -117,12 +117,15 @@ or directly from source:
 ::
 
     # With git
-    git clone https://github.com/insilichem/pychimera.git && python pychimera/setup.py install
+    git clone https://github.com/insilichem/pychimera.git
+    cd pychimera
+    python setup.py install
 
     # With wget
     wget https://github.com/insilichem/pychimera/archive/master.zip
     unzip pychimera*.zip
-    python pychimera-master/setup.py install
+    cd pychimera-master
+    python setup.py install
 
 While this *should* work in an ideal environment, it would probably have some rough edges
 due to the libraries installed in your system being different than the ones provided by
