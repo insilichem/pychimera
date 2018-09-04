@@ -3,13 +3,13 @@
 
 import os
 import sys
-from .linux import (_patch_envvars as _patch_envvars_linux, 
+from .linux import (_patch_envvars as _patch_envvars_linux,
                     launch_ipython)
 
 
 CHIMERA_BINARY = 'chimera'
 CHIMERA_PREFIX = 'Chimera*/Contents/Resources'
-CHIMERA_LOCATIONS = ('/Applications', 
+CHIMERA_LOCATIONS = ('/Applications',
                      os.path.expanduser('~/.local'),
                      os.path.expanduser('~/Desktop'))
 NULL = os.devnull
@@ -24,6 +24,7 @@ def _patch_paths(basedir, libdir, nogui=True):
     os.environ['PYTHONPATH'] = ':'.join(
         [os.path.join(basedir, 'share'),
          os.path.join(basedir, 'bin'),
+         os.path.join(libdir),
          os.path.join(libdir, 'python27.zip'),
          os.path.join(libdir, 'python2.7'),
          os.path.join(libdir, 'python2.7', 'plat-darwin'),
