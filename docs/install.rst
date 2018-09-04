@@ -31,6 +31,11 @@ Just run ``bash ~/Downloads/Miniconda*.sh`` and follow the wizard. Make
 sure to answer yes when the installer asks about modifying your ``.bashrc``.
 When you are done, close the terminal and reopen it to apply the changes.
 
+.. note::
+
+    The installer requires ``chimera`` to be in ``$PATH``. In Linux, you can symlink ``$CHIMERA_INSTALL_DIR/bin/chimera`` to any location of your ``$PATH`` (ie, ``~/.local/bin``). In OSX, make sure to use the binary located in ``/Applications/Chimera.app/Contents/Resources/bin/chimera``. There are alternative locations in the same ``Chimera.app`` directory that might not work!
+
+
 **Windows**
 
 Double-click on the ``.exe`` and follow the steps. Make sure to add Miniconda
