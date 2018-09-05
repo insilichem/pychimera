@@ -1,3 +1,4 @@
 include MANIFEST.in README.rst LICENSE
 include versioneer.py
 include pychimera/_version.py
+include pychimera/data/*.png

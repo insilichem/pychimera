@@ -56,6 +56,9 @@ def launch_ipython(argv=None):
         _launch_ipython_linux(ipython_app=JupyterQtConsoleApp)
 
 
+def patch_gui_icon():
+    pass
+
 __all__ = ('CHIMERA_BINARY',
            'CHIMERA_PREFIX',
            'CHIMERA_LOCATIONS',
@@ -63,4 +66,5 @@ __all__ = ('CHIMERA_BINARY',
            '_patch_envvars',
            '_patch_paths',
            '_patch_libraries',
+           'patch_gui_icon',
            'launch_ipython')

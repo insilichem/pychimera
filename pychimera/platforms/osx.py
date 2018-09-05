@@ -56,6 +56,8 @@ def _patch_libraries(basedir, libdir, nogui=True):
         os.environ['DYLD_FRAMEWORK_PATH'] = ':'.join([os.path.join(basedir, 'frameworks'),
                                                       OLD_FRAMEWORK_LIB])
 
+def patch_gui_icon():
+    pass
 
 __all__ = ('CHIMERA_BINARY',
            'CHIMERA_PREFIX',
@@ -64,4 +66,5 @@ __all__ = ('CHIMERA_BINARY',
            '_patch_envvars',
            '_patch_paths',
            '_patch_libraries',
+           'patch_gui_icon',
            'launch_ipython')

@@ -48,25 +48,22 @@ def enable_chimera(verbose=False, nogui=True):
     """
     if os.getenv('CHIMERA_ENABLED'):
         return
+    import chimera
+    _pre_gui_patches()
+    if not nogui:
+        chimera.registerPostGraphicsFunc(_post_gui_patches)
     try:
         import chimeraInit
+        if verbose:
+            chimera.replyobj.status('initializing pychimera')
     except ImportError as e:
         sys.exit(str(e) + "\nERROR: Chimera could not be loaded!")
-    import Tix, Tkinter as tk
-    if 'TIX_LIBRARY' in os.environ:
-        del os.environ['TIX_LIBRARY']
-    Tix._default_root = tk._default_root
-    if not nogui:
-        import chimera
-        chimera.title += ' (PyChimera)'
-        chimera.version.version = '{} (PyChimera v{})'.format(chimera.version.version, __version__)
-        chimera.registerPostGraphicsFunc(_tix_default_root_fix)
-
     chimeraInit.init(['', '--script', NULL] + (sys.argv[1:] if not nogui else []),
                      debug=verbose, silent=not verbose, nostatus=not verbose,
-                     nogui=nogui, eventloop=not nogui, exitonquit=not nogui)
-    del chimeraInit, Tix, tk
+                     nogui=nogui, eventloop=not nogui, exitonquit=not nogui,
+                     title=chimera.title+' (PyChimera)')
     os.environ['CHIMERA_ENABLED'] = '1'
+
 
 load_chimera = enable_chimera
 
@@ -74,7 +71,22 @@ load_chimera = enable_chimera
 def _tix_default_root_fix():
     import Tix
     import Tkinter as tk
+    if 'TIX_LIBRARY' in os.environ:
+        del os.environ['TIX_LIBRARY']
     Tix._default_root = tk._default_root
+
+
+def _pre_gui_patches():
+    _tix_default_root_fix()
+    import chimera
+    chimera.version.version += ' (PyChimera v{})'.format(__version__)
+
+
+def _post_gui_patches():
+    _tix_default_root_fix()
+    import chimera
+    chimera.version.version += ' (PyChimera v{})'.format(__version__)
+    patch_gui_icon()
 
 
 #---------------------------------------------------------------

@@ -29,4 +29,5 @@ __all__ = ('_INSTRUCTIONS',
            'CHIMERA_LOCATIONS',
            'NULL',
            'patch_environ_for_platform',
+           'patch_gui_icon',
            'launch_ipython')

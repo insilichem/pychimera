@@ -65,6 +65,17 @@ def launch_ipython(argv=None, ipython_app=None):
         app.initialize(argv)
         app.start()
 
+
+def patch_gui_icon():
+    import chimera
+    from PIL import Image, ImageTk
+    from .. import data
+    logo = Image.open(os.path.join(data.__path__[0], 'logo.png'))
+    logo_tk = ImageTk.PhotoImage(logo)
+    root = chimera.tkgui.app.winfo_toplevel()._root()
+    root.tk.call('wm', 'iconphoto', root._w, logo_tk)
+
+
 __all__ = ('CHIMERA_BINARY',
            'CHIMERA_PREFIX',
            'CHIMERA_LOCATIONS',
@@ -72,4 +83,5 @@ __all__ = ('CHIMERA_BINARY',
            '_patch_envvars',
            '_patch_paths',
            '_patch_libraries',
+           'patch_gui_icon',
            'launch_ipython')
