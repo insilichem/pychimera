@@ -78,14 +78,12 @@ def _tix_default_root_fix():
 
 def _pre_gui_patches():
     _tix_default_root_fix()
-    import chimera
-    chimera.version.version += ' (PyChimera v{})'.format(__version__)
 
 
 def _post_gui_patches():
     _tix_default_root_fix()
     import chimera
-    chimera.version.version += ' (PyChimera v{})'.format(__version__)
+    chimera.version.version += '\nPyChimera v{}'.format(__version__)
     patch_gui_icon()
 
 
