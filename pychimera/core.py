@@ -129,7 +129,6 @@ def patch_environ(nogui=True):
         except StopIteration:
             pass
 
-    CHIMERA_BASE = os.path.expanduser(CHIMERA_BASE)
     if not os.path.isdir(CHIMERA_BASE):
         sys.exit("Could not find UCSF Chimera.\n{}".format(_INSTRUCTIONS))
     os.environ['CHIMERA'] = CHIMERA_BASE
@@ -217,7 +216,7 @@ def _search_chimera(binary, directories, prefix, search_all=False):
     """
     # First, check if environment variable is already present
     try:
-        return os.environ['CHIMERADIR'],
+        return os.path.expanduser(os.environ['CHIMERADIR']),
     except KeyError:
         pass
 
