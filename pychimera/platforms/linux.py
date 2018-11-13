@@ -29,7 +29,8 @@ def _patch_paths(basedir, libdir, nogui=True):
 	     os.path.join(libdir, 'python2.7', 'lib-tk'),
 	     os.path.join(libdir, 'python2.7', 'lib-old'),
 	     os.path.join(libdir, 'python2.7', 'lib-dynload'),
-	     os.path.join(libdir, 'python2.7', 'site-packages')])
+	     os.path.join(libdir, 'python2.7', 'site-packages')] +
+         (sys.path if sys.executable == '/usr/bin/python' and not nogui else []))
 
 
 def _patch_libraries(basedir, libdir, nogui=True):
