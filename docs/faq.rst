@@ -40,3 +40,17 @@ the fix is to upgrade the package. You might have to remove it manually beforeha
 
     rm -r $(pychimera --path)/lib/python2.7/site-packages/setuptools-3.1*
     pip install --upgrade setuptools -t "$(pychimera --path)/lib/python2.7/site-packages"
+
+Chimera reports problems with libgfxinfo.so and pcrecpp
+-------------------------------------------------------
+
+The error traceback ends with:
+
+::
+
+    libgfxinfo.so: undefined symbol: _ZN7pcrecpp2RE4InitERKSsPKNS_10RE_OptionsE
+
+This is due to an incompatibility between Chimera's ``pcre`` libraries and those loaded by PyChimera. Depending on how you installed PyChimera, these will be:
+
+- Installed with ``conda`` (or with ``pip`` but inside a ``conda`` environment): the libraries will correspond to the ``pcre`` package in the conda environment. To make sure it works, you would probably have to downgrade to version 8.39 with ``conda install pcre=8.39``.
+- Installed with ``pip`` (outside a conda environment): the loaded library will be the system's one. If you can afford to downgrade to version 8.39 system-wide, do it. You will probably not, so the best option is to create a ``conda`` environment to execute PyChimera properly: ``conda create -n pychimera -c insilichem pychimera``.
