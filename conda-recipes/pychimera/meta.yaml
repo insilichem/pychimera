@@ -9,34 +9,34 @@ about:
 
 source:
   path: ../../
-  version: {{ environ.get('GIT_DESCRIBE_TAG', 'v')[1:]  }}
 
 build:
-  skip_compile_pyc:
-    - "*.py"
+  script: "{{ PYTHON }} -m pip install . --no-deps -vv"
+  number: 1
 
 requirements:
-  build:
+  host:
     - python 2.7*
     - setuptools
 
   run:
     - python 2.7*
     - nomkl
-    - freetype 2.5.5  # [unix]
-    - fontconfig 2.12 # [linux]
-    - glib 2.50.2  # [linux]
-    - pcre 8.39 # [linux]
-    - icu 54.1  # [unix]
-    - libgcc 5.2.0  # [linux]
-    - libiconv 1.14  # [unix]
-    - libpng 1.6.30  # [unix]
-    - ncurses 6.0  # [unix]
-    - pixman 0.32.6  # [linux]
-    - setuptools 27.2.0  # [unix]
+    - pcre 8.39.* # [linux]
+    # - freetype 2.5.5  # [unix]
+    # - fontconfig 2.12 # [linux]
+    # - glib 2.50.2  # [linux]
+    # - icu 54.1  # [unix]
+    # - libgcc 5.2.0  # [linux]
+    # - libiconv 1.14  # [unix]
+    # - libpng 1.6.30  # [unix]
+    # - ncurses 6.0  # [unix]
+    # - pixman 0.32.6  # [linux]
+    # - setuptools 27.2.0  # [unix]
 
 test:
   imports:
     - pychimera
   commands:
+    - pychimera -h
     - pychimera -c "import chimera"
