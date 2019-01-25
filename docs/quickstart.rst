@@ -115,29 +115,31 @@ tested in `Travis CI`_ (Linux, Mac OS X) and `AppVeyor`_ (Windows). Despite our 
 some features might not be as polished in some platforms. The table below summarizes
 the current state of implementation:
 
-+-------------------------+----------------------------+
-|                         | Platforms                  |
-+       Features          +-------+----------+---------+
-|                         | Linux | Mac OS X | Windows |
-+=========================+=======+==========+=========+
-| ``pychimera``           |   Y   |     Y    |    N    |
-+-------------------------+-------+----------+---------+
-| ``pychimera script.py`` |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
-| ``pychimera ipython``   |   Y   |     Y    |    Y*   |
-+-------------------------+-------+----------+---------+
-| ``pychimera notebook``  |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
-| ``pychimera --gui``     |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
-| ``pychimera -c``        |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
-| ``pychimera -i``        |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
-| ``pychimera -m``        |   Y   |     Y    |    Y    |
-+-------------------------+-------+----------+---------+
++-------------------------+-----------------------------+
+|                         | Platforms                   |
++       Features          +-------+----------+----------+
+|                         | Linux | Mac OS X | Windows* |
++=========================+=======+==========+==========+
+| ``pychimera``           |   Y   |     Y    |    N     |
++-------------------------+-------+----------+----------+
+| ``pychimera script.py`` |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
+| ``pychimera ipython``   |   Y   |     Y    |    Y**   |
++-------------------------+-------+----------+----------+
+| ``pychimera notebook``  |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
+| ``pychimera --gui``     |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
+| ``pychimera -c``        |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
+| ``pychimera -i``        |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
+| ``pychimera -m``        |   Y   |     Y    |    Y     |
++-------------------------+-------+----------+----------+
 
-\* Only with ``qtconsole`` installed.
+\* In Windows, use ``python -m pychimera``, not ``pychimera``.
+
+\*\* Only with ``qtconsole`` installed.
 
 PyChimera has been successfully installed and tested in the following 64-bit systems:
 
