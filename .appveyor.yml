@@ -34,7 +34,7 @@ install:
   - cmd: conda.exe build -q --python=2.7 conda-recipes/pychimera --no-test
   # Create specific Python 2 env
   - cmd: conda.exe env remove -n pychimera || true
-  - cmd: conda.exe create -n pychimera --use-local python=2.7 pychimera
+  - cmd: conda.exe create -n pychimera --use-local python=2.7 pychimera pytest
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat pychimera
 
 build: off
