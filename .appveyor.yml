@@ -4,42 +4,45 @@ environment:
   BINSTAR_TOKEN:
     secure: zW96v77uhbDdArc0805i/CDIvVpZvqCJyJ+WgSE1b65nPLO0nGUwmZ9qshUICIba
   matrix:
-    - PYTHON: "C:\\Python27_64"
-      PYTHON_VERSION: "2.7"
-      PYTHON_ARCH: "64"
-      CONDA_PY: "27"
-      CONDA_NPY: "111"
+    - CONDA_INSTALL_LOCN: C:\Miniconda-x64
       CHIMERA_VERSION: "1.13.1"
-      CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.13.1"
+      CHIMERADIR: "%USERPROFILE%\\chimera"
 
+platform:
+  - x64
 
 matrix:
   fast_finish: true
 
 cache:
-  - '%PYTHON%'
+  - '%CHIMERADIR%'
 
 install:
-  # this installs the appropriate Miniconda (Py2/Py3, 32/64 bit),
-  # as well as pip, conda-build
-  - ps: if (!(Test-Path $env:PYTHON\\Scripts\\conda.exe -PathType Leaf)){ .\\scripts\\install_miniconda.ps1 }
-  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  - "IF NOT EXIST %CHIMERADIR% conda build conda-recipes/ucsf-chimera"
-  - "IF NOT EXIST %CHIMERADIR% conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera"
+  # Cygwin's git breaks conda-build. (See https://github.com/conda-forge/conda-smithy-feedstock/pull/2.)
+  - cmd: rmdir C:\cygwin /s /q
+  # Add path, activate `conda` and update conda.
+  - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
+  - cmd: conda.exe config --set always_yes yes
+  - cmd: conda.exe config --remove-key channels || true
+  - cmd: conda.exe config --add channels defaults
+  - cmd: conda.exe install -q conda conda-build=3.16 git gnuwin32
+  - cmd: set PYTHONUNBUFFERED=1
+  # Install Chimera if needed
+  - cmd: "IF NOT EXIST %CHIMERADIR% bash scripts\\install_chimera.sh"
   # Dependencies
-  - conda build purge
-  - conda build -q --python=2.7 conda-recipes/pychimera --no-test
+  - cmd: conda.exe build purge
+  - cmd: conda.exe build -q --python=2.7 conda-recipes/pychimera --no-test
   # Create specific Python 2 env
-  - conda env remove -n pychimera || true
-  - conda create -n pychimera --use-local python=2.7 pychimera
-  - conda activate pychimera
+  - cmd: conda.exe env remove -n pychimera || true
+  - cmd: conda.exe create -n pychimera --use-local python=2.7 pychimera
+  - cmd: conda.exe activate pychimera
 
 build: off
 
 test_script:
   - cd tests
-  - pytest
-  - python pychimeratest.py pychimera_test*
+  - pytest -v
+  - python pychimeratest.py -v pychimera_test*
   - cd ..
   - conda deactivate
   - conda activate
