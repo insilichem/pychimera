@@ -1,7 +1,7 @@
 #!/bin/bash
 
 [[ $ARCH = 32 ]] && echo "32-bit builds are not supported anymore" && exit 1;
-
+_windows=0;
 # Linux
 uname_out="$(uname -s)"
 case "$uname_out" in
@@ -27,6 +27,7 @@ case "$uname_out" in
     _installdir="Chimera_${PKG_VERSION}"
     _hash="1cb7f1f4138fc4ff34a5c3383623b4a4" # v1.13.1
     _agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14931"
+    _windows=1;
   ;;
   *)
     echo "Platform ${uname_out} not supported"
@@ -52,11 +53,19 @@ download(){
     _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
     sleep 3;
     command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
-    echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+    if [[ $_windows = 1 ]]; then
+      echo "${_hash} ${_file}" | md5sum -c --quiet && break;
+    else
+      echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+    fi;
     n=$[$n+1];
     sleep 3;
   done;
-  echo "${_hash} ${_file}" | md5sum -c --strict --quiet
+  if [[ $_windows = 1 ]]; then
+    echo "${_hash} ${_file}" | md5sum -c --quiet && break;
+  else
+    echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+  fi;
 }
 
 installation_linux() {
