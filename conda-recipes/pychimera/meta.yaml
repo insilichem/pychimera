@@ -13,9 +13,6 @@ source:
 build:
   script: "{{ PYTHON }} -m pip install . --no-deps -vv"
   number: 1
-  entry_points:
-  - pychimera = pychimera.__main__:run
-
 
 requirements:
   host:
@@ -41,7 +38,5 @@ test:
   imports:
     - pychimera
   commands:
-    - python -m pychimera -h
     - python -m pychimera --path
-    - pychimera -h
-    - pychimera -c "import chimera"
+    - pychimera --path

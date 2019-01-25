@@ -11,8 +11,7 @@ def read(fname):
 
 version = versioneer.get_version()
 if sys.platform.startswith('win') or sys.platform == 'cygwin':
-    scripts = {'scripts': ['scripts/pychimera'],
-               'entry_points': {'console_scripts': ['pychimera = pychimera.__main__:run']}}
+    scripts = {}
 else:
     scripts = {'scripts': ['scripts/pychimera']}
 setup(

@@ -42,10 +42,12 @@ install:
 build: off
 
 test_script:
-  - cmd: python -c "import pychimera"
   - cmd: cd tests
-  - cmd: pytest -v
+  # Chimera loading and enabling
   - cmd: python pychimeratest.py -v pychimera_test*
+  # CLI testing; disabled, use `python -m pychimera` if needed
+  # - cmd: pytest -v
+  - cmd: python -m pychimera -c "print(2+2)"
   - cmd: cd ..
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\deactivate.bat
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat
