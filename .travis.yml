@@ -12,7 +12,6 @@ language: generic
 os:
 - linux
 - osx
-osx_image: xcode6.4
 dist: trusty
 sudo: false
 
@@ -39,9 +38,10 @@ cache:
   - $HOME/chimera
 
 before_cache:
+- conda deactivate || true
+- conda env remove -n pychimera
 - if [[ ! $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
 - rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
-- pip uninstall -y pychimera
 
 branches:
   only:
@@ -49,6 +49,66 @@ branches:
   - /^v?[0-9]+\.[0-9]+(\.[0-9]+)?([abc][0-9]*)?$/  # release branches
 
 before_install:
+# Check if UCSF Chimera is present and install it if needed
+- if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+    if [[ ! -e $HOME/chimera/bin/chimera ]]; then
+      set +x;
+      echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
+      echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
+      echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
+      echo "IMPORTANT - Downloading in 10 seconds...'";
+      sleep 10;
+      set -x;
+      _file="chimera-1.13.1-linux_x86_64_osmesa.bin";
+      _hash="ead53d8e3746d46176a1570835a03b1c";
+      _filepath="linux_x86_64_osmesa/${_file}";
+      _downloader="https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
+      n=0;
+      until [ $n -ge 5 ]; do
+        _download=$(command curl -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
+        sleep 3;
+        command curl "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
+        echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+        n=$[$n+1];
+      done;
+      echo "${_hash} ${_file}" | md5sum -c --strict --quiet;
+      chmod +x "${_file}";
+      mkdir -p "$HOME/chimera";
+      echo "$HOME/chimera" | "./${_file}";
+      rm $HOME/miniconda/bin/chimera || true;
+      ln -s $HOME/chimera/bin/chimera $HOME/miniconda/bin/chimera || true;
+      rm -rf $HOME/chimera/lib/python2.7/site-packages/{AutoDockTools,MolKit,PyBabel,mglutil,mmLib,mslib};
+      rm -rf $HOME/chimera/lib/python2.7/site-packages/setuptools*;
+    fi;
+    export CHIMERADIR="$HOME/chimera";
+  else
+    if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
+        set +x;
+        echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
+        echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
+        echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
+        echo "IMPORTANT - Downloading in 10 seconds...'";
+        sleep 10;
+        set -x;
+        _file="chimera-1.13.1-mac64.dmg";
+        _hash="62251f8677846e367de3cab4b5b1e8af";
+        _filepath="mac64/${_file}";
+        _downloader="https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
+        n=0;
+        until [ $n -ge 5 ]; do
+          _download=$(command curl -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
+          sleep 3;
+          command curl "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
+          echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+          n=$[$n+1];
+        done;
+        hdiutil convert "${_file}" -format UDRW -o chimerarw;
+        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
+        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/{AutoDockTools,MolKit,PyBabel,mglutil,mmLib,mslib};
+        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/setuptools*;
+    fi;
+    export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
+  fi
 # Get miniconda. Take the right version, so re-installing python is hopefully not needed.
 - if test -e $HOME/miniconda/bin; then
     echo "miniconda already installed.";
@@ -72,61 +132,36 @@ before_install:
     fi;
     bash $HOME/download/miniconda.sh -b -p $HOME/miniconda;
   fi
-
-
-install:
-- source $HOME/miniconda/bin/activate
-- hash -r
-
 # Configure conda and get a few essentials
+- source $HOME/miniconda/etc/profile.d/conda.sh
+- conda activate
 - conda config --set always_yes yes
-- conda install -q conda conda-build pytest
+- conda config --remove-key channels || true
+- conda config --add channels defaults
+- conda install -q conda conda-build=3.16 pytest
 # Show conda info for debugging
 - conda info -a
-
-# Check if UCSF Chimera is present and install it if needed
-- if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-    if [[ ! -e $HOME/miniconda/bin/chimera ]]; then
-      CHIMERA_PACKAGE="ucsf-chimera-headless";
-      conda build -q conda-recipes/$CHIMERA_PACKAGE;
-      conda install -y -c $HOME/miniconda/conda-bld $CHIMERA_PACKAGE;
-      ln -s $HOME/miniconda/bin/chimera-headless $HOME/miniconda/bin/chimera || true;
-    fi;
-  else
-    if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
-        set +x;
-        echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
-        echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
-        echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
-        echo "IMPORTANT - Downloading in 10 seconds...'";
-        sleep 10;
-        set -x;
-        _file="chimera-1.12-mac64.dmg";
-        _filepath="mac64/${_file}";
-        _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
-        _download=`curl -s -F file="${_filepath}" -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/'`;
-        curl "https://www.rbvi.ucsf.edu""${_download}" -o "${_file}";
-        hdiutil convert "${_file}" -format UDRW -o chimerarw;
-        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
-        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/setuptools*;
-        pip install -U setuptools -t $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages;
-    fi;
-    export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
-  fi
-# Show currently installed packages
 - conda list
-- python setup.py install
+- env | sort
+
+install:
+# Dependencies
+- conda build -q --python=2.7 conda-recipes/pychimera
+# Create specific Python 2 env
+- conda env remove -n pychimera || true
+- conda create -n pychimera --use-local python=2.7 pychimera
 
 script:
+- conda activate pychimera
 - cd tests
 - pytest
 - python pychimeratest.py pychimera_test*
 - cd ..
-- if [[ $TRAVIS_TAG ]]; then
-    conda build conda-recipes/pychimera --no-test;
-    conda install -q anaconda-client;
-    anaconda -t $ANACONDA_TOKEN upload -u insilichem $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2;
-  fi;
+- conda deactivate
+
+before_deploy:
+- conda activate
+- conda install -q anaconda-client
 
 deploy:
   # Deploy to PyPI
@@ -138,3 +173,9 @@ deploy:
     on:
       tags: true
       condition: "$TRAVIS_OS_NAME = linux"
+  # Deploy to Anaconda.org
+  - provider: script
+    script: anaconda -t $ANACONDA_TOKEN upload -u insilichem $HOME/miniconda/conda-bld/**/pychimera-*.tar.bz2;
+    skip_cleanup: true
+    on:
+      tags: true

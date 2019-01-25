@@ -9,8 +9,8 @@ environment:
       PYTHON_ARCH: "64"
       CONDA_PY: "27"
       CONDA_NPY: "111"
-      CHIMERA_VERSION: "1.12"
-      CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.12"
+      CHIMERA_VERSION: "1.13.1"
+      CHIMERADIR: "C:\\Python27_64\\Library\\Chimera_1.13.1"
 
 
 matrix:
@@ -26,10 +26,13 @@ install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
   - "IF NOT EXIST %CHIMERADIR% conda build conda-recipes/ucsf-chimera"
   - "IF NOT EXIST %CHIMERADIR% conda install -y -q -c %PYTHON%/conda-bld ucsf-chimera"
-  - conda install -y -q pytest
+  # Dependencies
   - conda build purge
-  - rm -rf %PYTHON%/conda-bld/*
-  - python setup.py install
+  - conda build -q --python=2.7 conda-recipes/pychimera --no-test
+  # Create specific Python 2 env
+  - conda env remove -n pychimera || true
+  - conda create -n pychimera --use-local python=2.7 pychimera
+  - conda activate pychimera
 
 build: off
 
@@ -38,8 +41,9 @@ test_script:
   - pytest
   - python pychimeratest.py pychimera_test*
   - cd ..
+  - conda deactivate
+  - conda activate
 
 deploy_script:
-  - conda build conda-recipes/pychimera --no-test
   - ps: If ($env:APPVEYOR_REPO_TAG -eq "true" -And $env:APPVEYOR_REPO_BRANCH -eq "master") { $env:conda_upload = 'true' } Else { write-output "Not on a tag on master, won't deploy to anaconda" }
   - cmd: IF "%conda_upload%"=="true" anaconda -t %BINSTAR_TOKEN% upload %PYTHON%/conda-bld/win-*/pychimera-*.tar.bz2 -u insilichem --no-progress --force
