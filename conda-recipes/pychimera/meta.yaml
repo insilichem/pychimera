@@ -21,7 +21,7 @@ requirements:
 
   run:
     - python 2.7*
-    - nomkl
+    - nomkl # [unix]
     - pcre 8.39.* # [linux]
     # - freetype 2.5.5  # [unix]
     # - fontconfig 2.12 # [linux]
