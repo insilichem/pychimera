@@ -36,12 +36,17 @@ install:
   - cmd: conda.exe env remove -n pychimera || true
   - cmd: conda.exe create -n pychimera --use-local python=2.7 pychimera pytest
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat pychimera
+  - cmd: conda.exe list
+  - cmd:
 
 build: off
 
 test_script:
   - cmd: cd tests
-  - cmd: pytest -v
+  - cmd: pychimera --help
+  - cmd: pychimera --path
+  - cmd: pychimera helloworld.py
+  # - cmd: pytest -v
   - cmd: python pychimeratest.py -v pychimera_test*
   - cmd: cd ..
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\deactivate.bat
