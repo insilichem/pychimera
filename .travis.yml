@@ -52,12 +52,12 @@ before_install:
 # Check if UCSF Chimera is present and install it if needed
 - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
     if [[ ! -e $HOME/chimera/bin/chimera ]]; then
-      bash scripts/install_chimera.sh
+      bash scripts/install_chimera.sh;
     fi;
     export CHIMERADIR="$HOME/chimera";
   else
     if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
-      bash scripts/install_chimera.sh
+      bash scripts/install_chimera.sh;
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
   fi
