@@ -14,7 +14,7 @@ matrix:
   fast_finish: true
 
 cache:
-  - '%CHIMERADIR%'
+  - "%CHIMERADIR%"
 
 install:
   # Cygwin's git breaks conda-build. (See https://github.com/conda-forge/conda-smithy-feedstock/pull/2.)
@@ -28,6 +28,8 @@ install:
   - cmd: set PYTHONUNBUFFERED=1
   # Install Chimera if needed
   - cmd: "IF NOT EXIST %CHIMERADIR% bash scripts\\install_chimera.sh"
+  - cmd: "IF EXIST %CHIMERADIR% %CHIMERADIR%\\bin\\chimera.exe --version"
+  - cmd: "IF EXIST %CHIMERADIR% %CHIMERADIR%\\bin\\chimera.exe --root"
   # Dependencies
   - cmd: conda.exe build purge
   - cmd: conda.exe build -q --python=2.7 conda-recipes/pychimera --no-test
@@ -36,7 +38,6 @@ install:
   - cmd: conda.exe create -n pychimera --use-local python=2.7 pychimera pytest
   - cmd: call %CONDA_INSTALL_LOCN%\Scripts\activate.bat pychimera
   - cmd: conda.exe list
-  - cmd:
 
 build: off
 
