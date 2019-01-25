@@ -52,60 +52,12 @@ before_install:
 # Check if UCSF Chimera is present and install it if needed
 - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
     if [[ ! -e $HOME/chimera/bin/chimera ]]; then
-      set +x;
-      echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
-      echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
-      echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
-      echo "IMPORTANT - Downloading in 10 seconds...'";
-      sleep 10;
-      set -x;
-      _file="chimera-1.13.1-linux_x86_64_osmesa.bin";
-      _hash="ead53d8e3746d46176a1570835a03b1c";
-      _filepath="linux_x86_64_osmesa/${_file}";
-      _downloader="https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
-      n=0;
-      until [ $n -ge 5 ]; do
-        _download=$(command curl -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
-        sleep 3;
-        command curl "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
-        echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
-        n=$[$n+1];
-      done;
-      echo "${_hash} ${_file}" | md5sum -c --strict --quiet;
-      chmod +x "${_file}";
-      mkdir -p "$HOME/chimera";
-      echo "$HOME/chimera" | "./${_file}";
-      rm $HOME/miniconda/bin/chimera || true;
-      ln -s $HOME/chimera/bin/chimera $HOME/miniconda/bin/chimera || true;
-      rm -rf $HOME/chimera/lib/python2.7/site-packages/{AutoDockTools,MolKit,PyBabel,mglutil,mmLib,mslib};
-      rm -rf $HOME/chimera/lib/python2.7/site-packages/setuptools*;
+      bash scripts/install_chimera.sh
     fi;
     export CHIMERADIR="$HOME/chimera";
   else
     if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
-        set +x;
-        echo "IMPORTANT - By downloading you accept the UCSF Chimera Non-Commercial Software License Agreement!";
-        echo "IMPORTANT - The license agreement can be found at http://www.cgl.ucsf.edu/chimera/license.html";
-        echo "IMPORTANT - If you do not agree, please press Ctrl-C now.";
-        echo "IMPORTANT - Downloading in 10 seconds...'";
-        sleep 10;
-        set -x;
-        _file="chimera-1.13.1-mac64.dmg";
-        _hash="62251f8677846e367de3cab4b5b1e8af";
-        _filepath="mac64/${_file}";
-        _downloader="https://www.cgl.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py";
-        n=0;
-        until [ $n -ge 5 ]; do
-          _download=$(command curl -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
-          sleep 3;
-          command curl "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
-          echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
-          n=$[$n+1];
-        done;
-        hdiutil convert "${_file}" -format UDRW -o chimerarw;
-        hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg;
-        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/{AutoDockTools,MolKit,PyBabel,mglutil,mmLib,mslib};
-        rm -rf $HOME/chimera/Chimera.app/Contents/Resources/lib/python2.7/site-packages/setuptools*;
+      bash scripts/install_chimera.sh
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
   fi
@@ -117,18 +69,10 @@ before_install:
     rm -rf $HOME/miniconda;
     mkdir -p $HOME/download;
     if [[ -d $HOME/download/miniconda.sh ]]; then rm -rf $HOME/download/miniconda.sh; fi;
-    if [ "${MYCONDAPY}" = "2.7" ]; then
-      if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O $HOME/download/miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O $HOME/download/miniconda.sh;
-      fi;
+    if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh -O $HOME/download/miniconda.sh;
     else
-      if [ "${TRAVIS_OS_NAME}" = "linux" ]; then
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O $HOME/download/miniconda.sh;
-      else
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O $HOME/download/miniconda.sh;
-      fi;
+      wget https://repo.continuum.io/miniconda/Miniconda2-latest-MacOSX-x86_64.sh -O $HOME/download/miniconda.sh;
     fi;
     bash $HOME/download/miniconda.sh -b -p $HOME/miniconda;
   fi
