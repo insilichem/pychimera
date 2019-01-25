@@ -5,8 +5,7 @@ environment:
     secure: zW96v77uhbDdArc0805i/CDIvVpZvqCJyJ+WgSE1b65nPLO0nGUwmZ9qshUICIba
   matrix:
     - CONDA_INSTALL_LOCN: C:\Miniconda-x64
-      CHIMERA_VERSION: "1.13.1"
-      CHIMERADIR: "%USERPROFILE%\\chimera"
+      CHIMERADIR: C:\chimera
 
 platform:
   - x64
@@ -43,8 +42,8 @@ build: off
 
 test_script:
   - cmd: cd tests
-  - cmd: pychimera --help
   - cmd: pychimera --path
+  - cmd: pychimera --help
   - cmd: pychimera helloworld.py
   # - cmd: pytest -v
   - cmd: python pychimeratest.py -v pychimera_test*

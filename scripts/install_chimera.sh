@@ -69,7 +69,7 @@ installation_mac() {
 
 installation_win() {
   cd "${SRC_DIR}"
-  cmd.exe /C "START /WAIT ${_file} /VERYSILENT /DIR=$HOME/chimera"
+  cmd.exe /C "START /WAIT ${_file} /VERYSILENT /DIR=$CHIMERADIR"
 }
 
 
