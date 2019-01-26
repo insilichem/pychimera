@@ -44,11 +44,11 @@ download_unix(){
     _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
     sleep 3;
     command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
-    echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+    echo "${_hash}  ${_file}" | md5sum -c --strict --quiet && break;
     n=$[$n+1];
     sleep 3;
   done;
-  echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
+  echo "${_hash}  ${_file}" | md5sum -c --strict --quiet || exit 1;
 }
 
 download_win(){
@@ -58,7 +58,8 @@ download_win(){
 }
 
 installation_linux() {
-  echo "$HOME/chimera" | "./${_file}"
+  chmod +x "${_file}";
+  echo "$HOME/chimera" | "./${_file}";
 }
 
 installation_mac() {
