@@ -66,6 +66,7 @@ installation_mac() {
   cd "${SRC_DIR}"
   hdiutil convert "${_file}" -format UDRW -o chimerarw
   _mountdir=$(echo `hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg | tail -1 | awk '{$1=$2=""; print $0}'` | xargs -0 echo)
+  echo "Installed at ${_mountdir}"
 }
 
 installation_win() {
@@ -90,7 +91,6 @@ case "$uname_out" in
   ;;
 # MacOS X
   Darwin* )
-    alias md5sum='md5 -r'
     download_unix
     installation_mac
   ;;

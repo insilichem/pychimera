@@ -46,11 +46,12 @@ before_install:
     fi;
     export CHIMERADIR="$HOME/chimera";
   else
+    sw_vers;
     if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
+      brew install md5sha1sum;
       bash scripts/install_chimera.sh;
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
-    sw_vers;
   fi
 # Get miniconda. Take the right version, so re-installing python is hopefully not needed.
 - if test -e $HOME/miniconda/bin; then
