@@ -90,6 +90,7 @@ case "$uname_out" in
   ;;
 # MacOS X
   Darwin* )
+    alias md5sum='md5 -r'
     download_unix
     installation_mac
   ;;
