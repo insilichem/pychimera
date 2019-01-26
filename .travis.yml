@@ -20,16 +20,10 @@ matrix:
     env: LINUX_DIST=xenial
   - os: osx
     osx_image: xcode7.3   # macOS 10.11  
-    before_install:
-    - sw_vers
   - os: osx
     osx_image: xcode8.3   # macOS 10.12
-    before_install:
-    - sw_vers
   - os: osx
     osx_image: xcode9.4   # macOS 10.13
-    before_install:
-    - sw_vers
    
 
 cache:
@@ -61,6 +55,7 @@ before_install:
       bash scripts/install_chimera.sh;
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
+    sw_vers;
   fi
 # Get miniconda. Take the right version, so re-installing python is hopefully not needed.
 - if test -e $HOME/miniconda/bin; then
