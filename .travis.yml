@@ -10,9 +10,6 @@ matrix:
   fast_finish: true
   include:
   - os: linux
-    dist: precise  # ubuntu 12.04
-    env: LINUX_DIST=precise
-  - os: linux
     dist: trusty   # ubuntu 14.04
     env: LINUX_DIST=trusty
   - os: linux
@@ -28,15 +25,13 @@ matrix:
 
 cache:
   directories:
-  - $HOME/download
   - $HOME/miniconda
   - $HOME/chimera
 
 before_cache:
 - conda deactivate || true
 - conda env remove -n pychimera
-- if [[ ! $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld; fi
-- rm -rf $HOME/miniconda/locks $HOME/miniconda/pkgs $HOME/miniconda/var $HOME/miniconda/conda-meta/history
+- if [[ ! $TRAVIS_TAG ]]; then rm -rf $HOME/miniconda/conda-bld/*; fi
 
 branches:
   only:
