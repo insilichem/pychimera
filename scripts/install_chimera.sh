@@ -38,23 +38,21 @@ esac
 
 _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py"
 
-download_unix(){
+download(){
+  _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
+  sleep 3;
+  command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
+}
+
+download_retry(){
   n=0;
   until [ $n -ge 10 ]; do
-    _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
-    sleep 3;
-    command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
+    download;
     echo "${_hash}  ${_file}" | md5sum -c --strict --quiet && break;
     n=$[$n+1];
     sleep 3;
   done;
   echo "${_hash}  ${_file}" | md5sum -c --strict --quiet || exit 1;
-}
-
-download_win(){
-  _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
-  sleep 3;
-  command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
 }
 
 installation_linux() {
@@ -86,17 +84,17 @@ set -x
 # Linux
 case "$uname_out" in
   Linux* )
-    download_unix
+    download_retry
     installation_linux
   ;;
 # MacOS X
   Darwin* )
-    download_unix
+    download
     installation_mac
   ;;
 # Emulated Windows
   CYGWIN*|MINGW*|MSYS*|*windows*)
-    download_win
+    download
     installation_win
   ;;
   *)
