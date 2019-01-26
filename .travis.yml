@@ -74,11 +74,11 @@ before_install:
   fi
 # Configure conda and get a few essentials
 - source $HOME/miniconda/etc/profile.d/conda.sh
-- conda activate
 - conda config --set always_yes yes
 - conda config --remove-key channels || true
 - conda config --add channels defaults
-- conda install -q conda conda-build=3.16
+- conda activate base
+- conda install -q -n base conda conda-build=3.16
 # Show conda info for debugging
 - conda info -a
 - conda list
@@ -86,7 +86,7 @@ before_install:
 
 install:
 # Dependencies
-- conda build -q --python=2.7 conda-recipes/pychimera
+- conda build -q --python=2.7 conda-recipes/pychimera --no-test
 # Create specific Python 2 env
 - conda env remove -n pychimera || true
 - conda create -n pychimera --use-local python=2.7 pychimera pytest
