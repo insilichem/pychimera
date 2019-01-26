@@ -48,7 +48,6 @@ before_install:
   else
     sw_vers;
     if [[ ! -e $HOME/chimera/Chimera.app/Contents/Resources/bin/chimera ]]; then
-      brew install md5sha1sum;
       bash scripts/install_chimera.sh;
     fi;
     export CHIMERADIR="$HOME/chimera/Chimera.app/Contents/Resources";
