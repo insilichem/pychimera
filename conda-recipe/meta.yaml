@@ -8,7 +8,7 @@ about:
   summary: Use UCSF Chimera Python API in a standard Python 2.7 interpreter.
 
 source:
-  path: ../../
+  path: ../
 
 build:
   script: "{{ PYTHON }} -m pip install . --no-deps -vv"
