@@ -38,33 +38,33 @@ esac
 
 _downloader="https://www.rbvi.ucsf.edu/chimera/cgi-bin/secure/chimera-get.py"
 
-download_unix(){
-  n=0;
-  until [ $n -ge 10 ]; do
-    _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
-    sleep 3;
-    command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
-    echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
-    n=$[$n+1];
-    sleep 3;
-  done;
-  echo "${_hash} ${_file}" | md5sum -c --strict --quiet && break;
-}
-
-download_win(){
+download(){
   _download=$(command curl -A "${_agent}" -F file=${_filepath} -F choice=Accept "${_downloader}" | grep href | sed -E 's/.*href="(.*)">/\1/');
   sleep 3;
   command curl -A "${_agent}" "https://www.cgl.ucsf.edu${_download}" -o "${_file}";
 }
 
+download_retry(){
+  n=0;
+  until [ $n -ge 10 ]; do
+    download;
+    echo "${_hash}  ${_file}" | md5sum -c --strict --quiet && break;
+    n=$[$n+1];
+    sleep 3;
+  done;
+  echo "${_hash}  ${_file}" | md5sum -c --strict --quiet || exit 1;
+}
+
 installation_linux() {
-  echo "$HOME/chimera" | "./${_file}"
+  chmod +x "${_file}";
+  echo "$HOME/chimera" | "./${_file}";
 }
 
 installation_mac() {
   cd "${SRC_DIR}"
   hdiutil convert "${_file}" -format UDRW -o chimerarw
   _mountdir=$(echo `hdiutil attach -mountpoint "$HOME/chimera" chimerarw.dmg | tail -1 | awk '{$1=$2=""; print $0}'` | xargs -0 echo)
+  echo "Installed at ${_mountdir}"
 }
 
 installation_win() {
@@ -84,17 +84,17 @@ set -x
 # Linux
 case "$uname_out" in
   Linux* )
-    download_unix
+    download_retry
     installation_linux
   ;;
 # MacOS X
   Darwin* )
-    download_unix
+    download
     installation_mac
   ;;
 # Emulated Windows
   CYGWIN*|MINGW*|MSYS*|*windows*)
-    download_win
+    download
     installation_win
   ;;
   *)
