@@ -12,7 +12,7 @@ source:
 
 build:
   script: "{{ PYTHON }} -m pip install . --no-deps -vv"
-  number: 1
+  number: 2
 
 requirements:
   host:
@@ -35,8 +35,16 @@ requirements:
     # - setuptools 27.2.0  # [unix]
 
 test:
+  requires:
+    - jupyter
+    - notebook
+    - ipython
+    - qtconsole # [win]
   imports:
     - pychimera
   commands:
     - python -m pychimera --path
     - pychimera --path
+    - pychimera -c "import chimera"
+    - pychimera ipython --help
+    - pychimera notebook --help

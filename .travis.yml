@@ -81,7 +81,7 @@ before_install:
 
 install:
 # Dependencies
-- conda build -q --python=2.7 conda-recipe --no-test
+- conda build -q --python=2.7 conda-recipe
 # Create specific Python 2 env
 - conda env remove -n pychimera || true
 - conda create -n pychimera --use-local python=2.7 pychimera pytest
