@@ -24,7 +24,7 @@ install:
   - cmd: conda.exe config --set always_yes yes
   - cmd: conda.exe config --remove-key channels || true
   - cmd: conda.exe config --add channels defaults
-  - cmd: conda.exe install -q conda=4.5 conda-build=3.16 git gnuwin32
+  - cmd: conda.exe install -q conda=4.5 conda-build git gnuwin32
   - cmd: set PYTHONUNBUFFERED=1
   # Install Chimera if needed
   - cmd: "IF NOT EXIST %CHIMERADIR% bash scripts\\install_chimera.sh"

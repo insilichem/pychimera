@@ -73,7 +73,7 @@ before_install:
 - conda config --remove-key channels || true
 - conda config --add channels defaults
 - conda activate base
-- conda install -q -n base conda conda-build=3.16
+- conda install -q -n base conda conda-build
 # Show conda info for debugging
 - conda info -a
 - conda list
