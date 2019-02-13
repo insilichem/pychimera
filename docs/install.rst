@@ -172,5 +172,5 @@ This is easily installed with conda:
 .. _UCSF Chimera download: https://www.cgl.ucsf.edu/chimera/download.html
 .. _conda: https://conda.io/miniconda.html
 .. _Miniconda: https://conda.io/miniconda.html
-.. _conda recipe: https://github.com/insilichem/pychimera/blob/master/conda-recipes/pychimera/meta.yaml
+.. _conda recipe: https://github.com/insilichem/pychimera/blob/master/conda-recipe/meta.yaml
 .. _Anaconda: https://www.anaconda.com/

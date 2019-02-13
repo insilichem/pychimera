@@ -1,0 +1,50 @@
+package:
+  name: pychimera
+  version: {{ environ.get('GIT_DESCRIBE_TAG', 'v')[1:] }}
+
+about:
+  home: https://github.com/insilichem/pychimera
+  license: LGPL
+  summary: Use UCSF Chimera Python API in a standard Python 2.7 interpreter.
+
+source:
+  path: ../
+
+build:
+  script: "{{ PYTHON }} -m pip install . --no-deps -vv"
+  number: 2
+
+requirements:
+  host:
+    - python 2.7*
+    - setuptools
+
+  run:
+    - python 2.7*
+    - nomkl # [unix]
+    - pcre 8.39.* # [linux]
+    # - freetype 2.5.5  # [unix]
+    # - fontconfig 2.12 # [linux]
+    # - glib 2.50.2  # [linux]
+    # - icu 54.1  # [unix]
+    # - libgcc 5.2.0  # [linux]
+    # - libiconv 1.14  # [unix]
+    # - libpng 1.6.30  # [unix]
+    # - ncurses 6.0  # [unix]
+    # - pixman 0.32.6  # [linux]
+    # - setuptools 27.2.0  # [unix]
+
+test:
+  requires:
+    - jupyter
+    - notebook
+    - ipython
+    - qtconsole # [win]
+  imports:
+    - pychimera
+  commands:
+    - python -m pychimera --path
+    - pychimera --path
+    - pychimera -c "import chimera"
+    - pychimera ipython --help
+    - pychimera notebook --help
