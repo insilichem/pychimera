@@ -9,6 +9,12 @@ UCSF Chimera bundles its own distribution of some popular packages, like
 reasons. Be warned if you use specific versions for your project,
 because you can face strange bugs if you don’t take this into account.
 
+For example:
+
+::
+
+    RuntimeError: module compiled against API version 9 but this version of numpy is 7
+
 In some platforms (Linux), this can be worked around with some work on
 the precendence of paths in ``sys.path``, but in some of them is not as easy (OS X).
 The easiest and most robust way to fix this is by upgrading UCSF Chimera's ``numpy``:
