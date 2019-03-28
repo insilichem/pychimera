@@ -61,3 +61,12 @@ This is due to an incompatibility between Chimera's ``pcre`` libraries and those
 - Installed with ``conda`` (or with ``pip`` but inside a ``conda`` environment): the libraries will correspond to the ``pcre`` package in the conda environment. To make sure it works, you would probably have to downgrade to version 8.39 with ``conda install pcre=8.39``.
 - Installed with ``pip`` (outside a conda environment): the loaded library will be the system's one. If you can afford to downgrade to version 8.39 system-wide, do it. You will probably not, so the best option is to create a ``conda`` environment to execute PyChimera properly: ``conda create -n pychimera -c insilichem pychimera``.
 - If nothing else works, you can try (as a last resort!) to remove the ``pcre`` package altogether. This can have some unexpected side effects in your environment, but if you only installed one of our projects (e.g. ``gaudi``), you should be fine. Do it like this: ``conda remove --force pcre``.
+
+dateutil version
+----------------
+
+As Numpy, the ``dateutil`` version shipped with Chimera is old, which can cause problems with some modern libaries. The solution is the same: upgrade the package built in Chimera.
+
+::
+
+    pip install -U -t $(pychimera --path)/lib/python2.7/site-packages python-dateutil
